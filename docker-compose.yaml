@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  backend:
+    build: .
+    restart: on-failure
+    ports:
+      - 3000:3000
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=postgres
+      - POSTGRES_DB_PASSWORD=postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - logs:/app/logs
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13-alpine
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  pgweb:
+    image: sosedoff/pgweb:0.13.1
+    restart: on-failure
+    ports:
+      - 8081:8081
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  logs:
