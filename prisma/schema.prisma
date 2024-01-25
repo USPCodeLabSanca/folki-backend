@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+model campus {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  institutes institute[]
+}
+
+model institute {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  campus   campus    @relation(fields: [campusId], references: [id])
+  campusId Int
+  courses  course[]
+  subject  subject[]
+}
+
+model course {
+  id              Int               @id @default(autoincrement())
+  name            String
+  institute       institute         @relation(fields: [instituteId], references: [id])
+  instituteId     Int
+  default_subject default_subject[]
+}
+
+model subject {
+  id              Int               @id @default(autoincrement())
+  name            String
+  code            String            @unique
+  institute       institute         @relation(fields: [instituteId], references: [id])
+  instituteId     Int
+  default_subject default_subject[]
+}
+
+model default_subject {
+  subject   subject @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  course    course  @relation(fields: [courseId], references: [id])
+  courseId  Int
+  period    Int
+
+  @@id([subjectId, courseId])
+}
