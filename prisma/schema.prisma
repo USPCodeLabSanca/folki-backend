@@ -27,20 +27,21 @@ model institute {
 }
 
 model course {
-  id              Int               @id @default(autoincrement())
-  name            String
-  institute       institute         @relation(fields: [instituteId], references: [id])
-  instituteId     Int
-  default_subject default_subject[]
+  id             Int               @id @default(autoincrement())
+  name           String
+  institute      institute         @relation(fields: [instituteId], references: [id])
+  instituteId    Int
+  defaultSubject default_subject[]
 }
 
 model subject {
-  id              Int               @id @default(autoincrement())
-  name            String
-  code            String            @unique
-  institute       institute         @relation(fields: [instituteId], references: [id])
-  instituteId     Int
-  default_subject default_subject[]
+  id             Int               @id @default(autoincrement())
+  name           String
+  code           String            @unique
+  institute      institute         @relation(fields: [instituteId], references: [id])
+  instituteId    Int
+  defaultSubject default_subject[]
+  subjectClass   subject_class[]
 }
 
 model default_subject {
@@ -51,4 +52,13 @@ model default_subject {
   period    Int
 
   @@id([subjectId, courseId])
+}
+
+model subject_class {
+  id            Int     @id @default(autoincrement())
+  subject       subject @relation(fields: [subjectId], references: [id])
+  subjectId     Int
+  professorName String
+  details       String
+  availableDays Json
 }
