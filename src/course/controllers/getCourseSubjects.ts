@@ -14,8 +14,10 @@ const getCourseDefaultSubjects = async (req: Request, res: Response) => {
 
     const subjectsResult = await prisma.default_subject.findMany({
       where: { period: Number(period), courseId: Number(id) },
-      include: { subject: true },
+      include: { subject: { include: { subjectClass: true } } },
     })
+
+    console.log(subjectsResult)
 
     const subjects = subjectsResult.map((subject) => subject.subject)
 
