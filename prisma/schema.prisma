@@ -3,7 +3,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -18,17 +18,20 @@ model campus {
 }
 
 model institute {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  campus   campus    @relation(fields: [campusId], references: [id])
-  campusId Int
-  courses  course[]
-  subject  subject[]
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  jupiterCode String    @default("")
+  campus      campus    @relation(fields: [campusId], references: [id])
+  campusId    Int
+  courses     course[]
+  subject     subject[]
 }
 
 model course {
   id             Int               @id @default(autoincrement())
   name           String
+  jupiterCode    String            @default("")
+  jupiterCodeHab String            @default("")
   institute      institute         @relation(fields: [instituteId], references: [id])
   instituteId    Int
   defaultSubject default_subject[]

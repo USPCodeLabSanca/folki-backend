@@ -1,5 +1,5 @@
 interface Subject {
-  id: number
+  id?: number
   name: string
   code: string
   instituteId?: number
