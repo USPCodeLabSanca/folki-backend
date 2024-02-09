@@ -17,16 +17,23 @@ const getJupiterDefaultSubjects = async (jupiterCode: String, jupiterCodeHab: St
     const html = decoder.decode(buffer)
 
     const $ = cheerio.load(html, { decodeEntities: false })
-    const tbody = $('table tbody table tbody')[10]
-    const trs = $(tbody).children('tr')
+    const tbody = $('table tbody table tbody')[11]
+    const trs = $('tr')
 
     const periods: string[][] = []
 
     let electiveStarted = false
+    let started = false
 
     trs.get().forEach((tr, index) => {
       const isTheFirstTr = index === 0
-      if (electiveStarted || isTheFirstTr) return
+
+      if (!started) {
+        started = tr.attribs.bgcolor === '#658CCF'
+        if (started) console.log($(tr).text().trim())
+      }
+
+      if (electiveStarted || isTheFirstTr || !started) return
 
       const isNewPeriod = tr.attribs.bgcolor === '#CCCCCC'
 
@@ -35,7 +42,7 @@ const getJupiterDefaultSubjects = async (jupiterCode: String, jupiterCodeHab: St
         return
       }
 
-      const isSubject = tr.attribs.bgcolor === '#FFFFFF'
+      const isSubject = tr.attribs.bgcolor === '#FFFFFF' && $(tr).find('a').get().length
 
       if (isSubject) {
         const tds = tr.children
@@ -44,7 +51,7 @@ const getJupiterDefaultSubjects = async (jupiterCode: String, jupiterCodeHab: St
         periods[periods.length - 1].push(code)
       }
 
-      electiveStarted = tr.attribs.bgcolor === '#658CCF'
+      electiveStarted = $(tr).text().trim().includes('Optativas')
     })
 
     return periods
@@ -107,9 +114,9 @@ const syncDefaultSubjectsJupiterWorker = () => {
           }),
         ])
 
-        console.log(`INFO: ${jupiterSubjects.length} default subjects synced from jupiter web - ${course.name}`)
+        console.log(`INFO: ${jupiterSubjects.length} default subjects synced from jupiter web - ${course.name}\n`)
       } catch (error) {
-        console.log(`ERROR: Syncing default subjects from jupiter web of course ${courseId} failed`)
+        console.log(`ERROR: Syncing default subjects from jupiter web of course ${courseId} failed\n`)
         throw error
       }
     },

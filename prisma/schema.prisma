@@ -21,6 +21,7 @@ model institute {
   id          Int       @id @default(autoincrement())
   name        String    @unique
   jupiterCode String    @default("")
+  isVisible   Boolean   @default(true)
   campus      campus    @relation(fields: [campusId], references: [id])
   campusId    Int
   courses     course[]
