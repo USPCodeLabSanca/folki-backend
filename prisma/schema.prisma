@@ -26,6 +26,7 @@ model institute {
   campusId    Int
   courses     course[]
   subject     subject[]
+  users       user[]
 }
 
 model course {
@@ -36,6 +37,7 @@ model course {
   institute      institute         @relation(fields: [instituteId], references: [id])
   instituteId    Int
   defaultSubject default_subject[]
+  users          user[]
 }
 
 model subject {
@@ -65,4 +67,20 @@ model subject_class {
   professorName String
   details       String
   availableDays Json
+}
+
+model user {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String
+  institute   institute @relation(fields: [instituteId], references: [id])
+  instituteId Int
+  course      course    @relation(fields: [courseId], references: [id])
+  courseId    Int
+  securePin   String    @default("1234")
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+  updatedAt   DateTime  @updatedAt
+  lastLogin   DateTime?
+  lastAccess  DateTime?
 }
