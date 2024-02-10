@@ -1,5 +1,8 @@
 start-docker:
-	@docker compose up -d
+	@docker compose up --build -d
+
+restart-docker:
+	@docker compose down; docker compose up --build -d
 
 run-migration-docker:
 	@docker compose run backend npx prisma migrate dev --name "${message}"
