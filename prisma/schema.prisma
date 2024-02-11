@@ -48,6 +48,7 @@ model subject {
   instituteId    Int
   defaultSubject default_subject[]
   subjectClass   subject_class[]
+  user_subject   user_subject[]
 }
 
 model default_subject {
@@ -70,23 +71,24 @@ model subject_class {
 }
 
 model user {
-  id             Int         @id @default(autoincrement())
-  email          String      @unique
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
   name           String
-  institute      institute?  @relation(fields: [instituteId], references: [id])
+  institute      institute?     @relation(fields: [instituteId], references: [id])
   instituteId    Int?
-  course         course?     @relation(fields: [courseId], references: [id])
+  course         course?        @relation(fields: [courseId], references: [id])
   courseId       Int?
-  securePin      String?     @default("1234")
-  isVerified     Boolean     @default(false)
-  authTimesTried Int         @default(0)
+  securePin      String?        @default("1234")
+  isVerified     Boolean        @default(false)
+  authTimesTried Int            @default(0)
   lastAuthTry    DateTime?
-  createdAt      DateTime    @default(now())
+  createdAt      DateTime       @default(now())
   deletedAt      DateTime?
-  updatedAt      DateTime    @updatedAt
+  updatedAt      DateTime       @updatedAt
   lastLogin      DateTime?
   lastAccess     DateTime?
   user_auth      user_auth[]
+  user_subject   user_subject[]
 }
 
 model user_auth {
@@ -96,4 +98,18 @@ model user_auth {
   authCode  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model user_subject {
+  user          user     @relation(fields: [userId], references: [id])
+  userId        Int
+  subject       subject  @relation(fields: [subjectId], references: [id])
+  subjectId     Int
+  absences      Int      @default(0)
+  grading       Float    @default(0)
+  createdAt     DateTime @default(now())
+  availableDays Json
+  updatedAt     DateTime @updatedAt
+
+  @@id([userId, subjectId])
 }
