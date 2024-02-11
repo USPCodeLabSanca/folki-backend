@@ -42,7 +42,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     next()
   } catch (err: any) {
     /* istanbul ignore next */
-    console.log(`[ERROR] [Auth Middleware] Unexpected Auth Error: ${err.message}`)
+    console.error(`[ERROR] [Auth Middleware] Unexpected Auth Error: ${err.message}`)
     /* istanbul ignore next */
     return res
       .status(500)

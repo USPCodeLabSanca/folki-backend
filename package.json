@@ -21,6 +21,7 @@
   "dependencies": {
     "@prisma/client": "^5.8.1",
     "@types/jsonwebtoken": "^9.0.5",
+    "aws-sdk": "^2.1555.0",
     "bullmq": "^5.1.5",
     "cheerio": "^1.0.0-rc.12",
     "express": "^4.18.2",
