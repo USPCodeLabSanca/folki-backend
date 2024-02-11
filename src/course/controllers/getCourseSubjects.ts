@@ -17,8 +17,6 @@ const getCourseDefaultSubjects = async (req: Request, res: Response) => {
       include: { subject: { include: { subjectClass: true } } },
     })
 
-    console.log(subjectsResult)
-
     const subjects = subjectsResult.map((subject) => subject.subject)
 
     return res.send(subjects)

@@ -30,7 +30,6 @@ const getJupiterDefaultSubjects = async (jupiterCode: String, jupiterCodeHab: St
 
       if (!started) {
         started = tr.attribs.bgcolor === '#658CCF'
-        if (started) console.log($(tr).text().trim())
       }
 
       if (electiveStarted || isTheFirstTr || !started) return
