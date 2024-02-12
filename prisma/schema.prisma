@@ -101,15 +101,26 @@ model user_auth {
 }
 
 model user_subject {
-  user          user     @relation(fields: [userId], references: [id])
+  user          user           @relation(fields: [userId], references: [id])
   userId        Int
-  subject       subject  @relation(fields: [subjectId], references: [id])
+  subject       subject        @relation(fields: [subjectId], references: [id])
   subjectId     Int
-  absences      Int      @default(0)
-  grading       Float    @default(0)
-  createdAt     DateTime @default(now())
+  absences      Int            @default(0)
+  grading       Float          @default(0)
+  createdAt     DateTime       @default(now())
   availableDays Json
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime       @updatedAt
+  user_absences user_absence[]
 
   @@id([userId, subjectId])
+}
+
+model user_absence {
+  id          Int          @id @default(autoincrement())
+  date        DateTime
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
+  userId      Int
+  subjectId   Int
 }
