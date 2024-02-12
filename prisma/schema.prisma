@@ -111,6 +111,7 @@ model user_subject {
   availableDays Json
   updatedAt     DateTime       @updatedAt
   user_absences user_absence[]
+  activity      activity[]
 
   @@id([userId, subjectId])
 }
@@ -123,4 +124,28 @@ model user_absence {
   userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
   userId      Int
   subjectId   Int
+}
+
+model activity {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  value       Float?
+  userValue   Float        @default(0)
+  completed   Boolean      @default(false)
+  userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
+  userId      Int
+  subjectId   Int
+  type        ActivityType
+  finishDate  DateTime
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum ActivityType {
+  EXAM
+  HOMEWORK
+  ACTIVITY
+  LIST
 }
