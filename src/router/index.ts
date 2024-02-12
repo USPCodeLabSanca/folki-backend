@@ -9,6 +9,7 @@ import usersRouter from '../user/user.router'
 import absencesRouter from '../absence/absence.router'
 import activitiesRouter from '../activity/activity.router'
 import groupsRouter from '../group/group.router'
+import driveRouter from '../drive/drive.router'
 
 const router = express.Router()
 
@@ -21,5 +22,6 @@ router.use('/users', usersRouter)
 router.use('/absences', absencesRouter)
 router.use('/activities', activitiesRouter)
 router.use('/groups', groupsRouter)
+router.use('/drive', driveRouter)
 
 export default router

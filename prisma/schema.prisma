@@ -42,14 +42,16 @@ model course {
 }
 
 model subject {
-  id             Int               @id @default(autoincrement())
-  name           String
-  code           String            @unique
-  institute      institute         @relation(fields: [instituteId], references: [id])
-  instituteId    Int
-  defaultSubject default_subject[]
-  subjectClass   subject_class[]
-  user_subject   user_subject[]
+  id               Int               @id @default(autoincrement())
+  name             String
+  code             String            @unique
+  institute        institute         @relation(fields: [instituteId], references: [id])
+  instituteId      Int
+  driveItemsNumber Int               @default(0)
+  defaultSubject   default_subject[]
+  subjectClass     subject_class[]
+  user_subject     user_subject[]
+  driveItems       drive_item[]
 }
 
 model default_subject {
@@ -171,6 +173,16 @@ model tag {
   name      String   @unique
   createdAt DateTime @default(now())
   groups    group[]  @relation("group_tag")
+}
+
+model drive_item {
+  id        Int      @id @default(autoincrement())
+  name      String
+  link      String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  subject   subject  @relation(fields: [subjectId], references: [id])
+  subjectId Int
 }
 
 enum ActivityType {
