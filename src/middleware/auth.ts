@@ -25,7 +25,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     const tokenData: any = jwt.verify(token, process.env.JWT_SECRET || 'secret')
     const user = await prisma.user.findUnique({
       where: { id: tokenData.id },
-      select: { email: true, id: true, name: true, securePin: true },
+      select: { email: true, id: true, name: true, securePin: true, isAdmin: true },
     })
 
     if (!user) return res.status(401).send({ title: 'Erro de Autorização', message: 'Usuário não Existe' })

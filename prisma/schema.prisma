@@ -15,6 +15,7 @@ model campus {
   id         Int         @id @default(autoincrement())
   name       String      @unique
   institutes institute[]
+  groups     group[]     @relation("group_campus")
 }
 
 model institute {
@@ -78,6 +79,7 @@ model user {
   instituteId    Int?
   course         course?        @relation(fields: [courseId], references: [id])
   courseId       Int?
+  isAdmin        Boolean        @default(false)
   securePin      String?        @default("1234")
   isVerified     Boolean        @default(false)
   authTimesTried Int            @default(0)
@@ -97,7 +99,6 @@ model user_auth {
   userId    Int
   authCode  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model user_subject {
@@ -109,7 +110,6 @@ model user_subject {
   grading       Float          @default(0)
   createdAt     DateTime       @default(now())
   availableDays Json
-  updatedAt     DateTime       @updatedAt
   user_absences user_absence[]
   activity      activity[]
 
@@ -120,7 +120,6 @@ model user_absence {
   id          Int          @id @default(autoincrement())
   date        DateTime
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
   userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
   userId      Int
   subjectId   Int
@@ -141,6 +140,37 @@ model activity {
   completedAt DateTime?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model group {
+  id               Int          @id @default(autoincrement())
+  name             String
+  shortDescription String
+  fullDescription  String
+  logo             String
+  importanceWeight Int          @default(1)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  campuses         campus[]     @relation("group_campus")
+  tags             tag[]        @relation("group_tag")
+  links            group_link[]
+}
+
+model group_link {
+  id        Int      @id @default(autoincrement())
+  icon      String?
+  name      String?
+  link      String
+  createdAt DateTime @default(now())
+  group     group    @relation(fields: [groupId], references: [id])
+  groupId   Int
+}
+
+model tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  groups    group[]  @relation("group_tag")
 }
 
 enum ActivityType {

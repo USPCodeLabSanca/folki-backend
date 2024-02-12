@@ -8,6 +8,7 @@ const updateMe = async (req: Request, res: Response) => {
   delete body.email
   delete body.id
   delete body.securePin
+  delete body.isAdmin
 
   try {
     const updatedUser = await prisma.user.update({ where: { id: user!.id }, data: body })
