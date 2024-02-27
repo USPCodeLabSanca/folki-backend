@@ -34,7 +34,7 @@ const getJupiterClasses = async (subjectCode: string) => {
     let index = -1
 
     tbodies.get().forEach((tbod) => {
-      if ($(tbod).find('tr').eq(4).text().includes('Observações:') && index === -1) index = 0
+      if ($(tbod).text().includes('Observações:') && index === -1) index = 0
 
       if (!index) {
         classes.push({

@@ -85,6 +85,7 @@ model user {
   securePin      String?        @default("1234")
   isVerified     Boolean        @default(false)
   authTimesTried Int            @default(0)
+  notificationId String?
   lastAuthTry    DateTime?
   createdAt      DateTime       @default(now())
   deletedAt      DateTime?
@@ -104,6 +105,7 @@ model user_auth {
 }
 
 model user_subject {
+  id            Int            @id @default(autoincrement())
   user          user           @relation(fields: [userId], references: [id])
   userId        Int
   subject       subject        @relation(fields: [subjectId], references: [id])
@@ -114,34 +116,34 @@ model user_subject {
   availableDays Json
   user_absences user_absence[]
   activity      activity[]
-
-  @@id([userId, subjectId])
 }
 
 model user_absence {
-  id          Int          @id @default(autoincrement())
-  date        DateTime
-  createdAt   DateTime     @default(now())
-  userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
-  userId      Int
-  subjectId   Int
+  id            Int          @id @default(autoincrement())
+  date          DateTime
+  createdAt     DateTime     @default(now())
+  userSubject   user_subject @relation(fields: [userSubjectId], references: [id])
+  userId        Int
+  subjectId     Int
+  userSubjectId Int
 }
 
 model activity {
-  id          Int          @id @default(autoincrement())
-  name        String
-  description String
-  value       Float?
-  userValue   Float        @default(0)
-  completed   Boolean      @default(false)
-  userSubject user_subject @relation(fields: [userId, subjectId], references: [userId, subjectId])
-  userId      Int
-  subjectId   Int
-  type        ActivityType
-  finishDate  DateTime
-  completedAt DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id            Int          @id @default(autoincrement())
+  name          String
+  description   String
+  value         Float?
+  userValue     Float        @default(0)
+  completed     Boolean      @default(false)
+  userSubject   user_subject @relation(fields: [userSubjectId], references: [id])
+  userSubjectId Int
+  userId        Int
+  subjectId     Int
+  type          ActivityType
+  finishDate    DateTime
+  completedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model group {

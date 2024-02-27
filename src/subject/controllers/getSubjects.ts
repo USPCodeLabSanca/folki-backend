@@ -14,7 +14,7 @@ const getSubjects = async (req: Request, res: Response) => {
     if (search) {
       subjects = await searchSubjects(String(search))
     } else {
-      subjects = await prisma.subject.findMany({ include: { subjectClass: true } })
+      subjects = await prisma.subject.findMany({ include: { subjectClass: true, institute: true } })
     }
 
     if (preferenceCampus) {

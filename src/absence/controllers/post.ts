@@ -11,10 +11,18 @@ const post = async (req: Request, res: Response) => {
     return res.status(400).send({ title: 'Dados inválidos', message: 'Por favor, insira os dados corretamente' })
 
   try {
+    const userSubject = await prisma.user_subject.findFirst({
+      where: { userId: user!.id, subjectId: Number(subjectId) },
+    })
+    if (!userSubject)
+      return res.status(404).send({ title: 'Matéria não encontrada', message: 'Matéria não encontrada' })
+
     await prisma.$transaction([
-      prisma.user_absence.create({ data: { subjectId: Number(subjectId), date, userId: user!.id } }),
+      prisma.user_absence.create({
+        data: { userSubjectId: userSubject.id, subjectId: Number(subjectId), date, userId: user!.id },
+      }),
       prisma.user_subject.update({
-        where: { userId_subjectId: { userId: user!.id, subjectId: Number(subjectId) } },
+        where: { id: userSubject.id },
         data: { absences: { increment: 1 } },
       }),
     ])
