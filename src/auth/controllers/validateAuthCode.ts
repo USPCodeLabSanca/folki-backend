@@ -42,7 +42,10 @@ const validateAuthCode = async (req: Request, res: Response) => {
       return res.status(400).send({ title: 'Erro de Autenticação', message: 'Código de Autenticação Inválido' })
 
     await prisma.user_auth.deleteMany({ where: { userId: Number(userId) } })
-    await prisma.user.update({ where: { id: user.id }, data: { authTimesTried: 0, isVerified: true } })
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { authTimesTried: 0, isVerified: true, lastLogin: new Date() },
+    })
 
     const token = createToken(user.id, user.securePin!)
 

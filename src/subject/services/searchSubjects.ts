@@ -18,7 +18,7 @@ const searchSubjects = async (search: string) => {
         },
       ],
     },
-    include: { subjectClass: true },
+    include: { subjectClass: true, institute: true },
   })
 
   return subjects

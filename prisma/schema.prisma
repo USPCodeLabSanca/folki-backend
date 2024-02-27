@@ -85,6 +85,7 @@ model user {
   securePin      String?        @default("1234")
   isVerified     Boolean        @default(false)
   authTimesTried Int            @default(0)
+  notificationId String?
   lastAuthTry    DateTime?
   createdAt      DateTime       @default(now())
   deletedAt      DateTime?
