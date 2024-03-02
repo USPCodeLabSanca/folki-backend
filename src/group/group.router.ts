@@ -4,8 +4,8 @@ import auth from '../middleware/auth'
 
 const router = express.Router()
 
-router.route('/').get(controller.getGroupsByCampusAndTags)
-router.route('/:id').get(controller.getGroup)
+router.route('/').all(auth).get(controller.getGroupsByCampusAndTags)
+router.route('/:id').all(auth).get(controller.getGroup)
 router.route('/').all(auth).post(controller.createGroup)
 router.route('/:id').all(auth).delete(controller.deleteGroup)
 

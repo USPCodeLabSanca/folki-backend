@@ -15,6 +15,6 @@ router.route('/classes/sync').post(controller.runSyncClassesJupiterBySubject)
 router.route('/:id/absences').all(auth).get(absencesController.getAllFromSubject)
 router.route('/:id/absences').all(auth).post(absencesController.post)
 
-router.route('/:id/drive').get(driveController.getDriveItems)
+router.route('/:id/drive').all(auth).get(driveController.getDriveItems)
 
 export default router
