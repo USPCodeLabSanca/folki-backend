@@ -82,6 +82,7 @@ model user {
   course         course?        @relation(fields: [courseId], references: [id])
   courseId       Int?
   isAdmin        Boolean        @default(false)
+  isBlocked      Boolean        @default(false)
   securePin      String?        @default("1234")
   isVerified     Boolean        @default(false)
   authTimesTried Int            @default(0)

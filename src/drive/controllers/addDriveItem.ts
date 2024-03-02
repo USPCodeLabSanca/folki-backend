@@ -7,17 +7,17 @@ const addDriveItem = async (req: Request, res: Response) => {
 
   if (!body) return res.status(400).send({ title: 'Requisição inválida', message: 'Dados inválidos' })
 
-  if (!user?.isAdmin && body.approved === true)
+  if (user?.isBlocked)
     return res
       .status(401)
-      .send({ title: 'Não autorizado', message: 'Você não tem permissão para aprovar itens do drive' })
+      .send({ title: 'Não autorizado', message: 'Você não tem permissão para enviar itens para o drive' })
 
   try {
     const driveItemData = {
       name: body.name,
       link: body.link,
       subjectId: body.subjectId,
-      approved: body.approved,
+      approved: true,
     }
 
     const driveItem = await prisma.drive_item.create({
