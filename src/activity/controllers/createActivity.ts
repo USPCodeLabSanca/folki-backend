@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const createActivity = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -29,6 +30,13 @@ const createActivity = async (req: Request, res: Response) => {
         userId: user!.id,
       },
     })
+
+    mixpanel.track('Add Activity', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      activity,
+    })
+
     res.send({ activity })
   } catch (error: any) {
     console.error(`[ERROR] [Create Activity] Unexpected Error: ${error.message}`)

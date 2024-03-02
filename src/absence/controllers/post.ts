@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const post = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -26,6 +27,13 @@ const post = async (req: Request, res: Response) => {
         data: { absences: { increment: 1 } },
       }),
     ])
+
+    mixpanel.track('Add Absence', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      userSubject,
+    })
+
     res.status(201).send({ succesful: true })
   } catch (error: any) {
     console.error(`[ERROR] [Post Absence] Unexpected Error: ${error.message}`)

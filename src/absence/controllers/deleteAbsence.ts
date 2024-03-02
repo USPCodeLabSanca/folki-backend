@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const deleteAbsence = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -17,6 +18,13 @@ const deleteAbsence = async (req: Request, res: Response) => {
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para deletar essa falta' })
 
     await prisma.user_absence.delete({ where: { id: Number(id) } })
+
+    mixpanel.track('Delete Absence', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      absence,
+    })
+
     res.send({ succesful: true })
   } catch (error: any) {
     console.error(`[ERROR] [Delete Absence] Unexpected Error: ${error.message}`)

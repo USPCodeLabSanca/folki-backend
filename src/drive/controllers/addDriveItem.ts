@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const addDriveItem = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -30,6 +31,13 @@ const addDriveItem = async (req: Request, res: Response) => {
         data: { driveItemsNumber: { increment: 1 } },
       })
     }
+
+    mixpanel.track('Add Drive Item', {
+      // @ts-ignore
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      driveItem: driveItem,
+    })
 
     res.send({ driveItem })
   } catch (error: any) {

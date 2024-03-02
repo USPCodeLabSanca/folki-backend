@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const getDriveItems = async (req: Request, res: Response) => {
   const { id } = req.params
@@ -7,6 +8,13 @@ const getDriveItems = async (req: Request, res: Response) => {
   try {
     const driveItems = await prisma.drive_item.findMany({
       where: { subjectId: Number(id), approved: true },
+    })
+
+    mixpanel.track('Get Drive Items', {
+      // @ts-ignore
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      subjectId: id,
     })
 
     return res.send({ driveItems })

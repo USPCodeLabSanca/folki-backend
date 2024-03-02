@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const getGroupsByCampusAndTags = async (req: Request, res: Response) => {
   const { campusId, tags } = req.query
@@ -44,6 +45,14 @@ const getGroupsByCampusAndTags = async (req: Request, res: Response) => {
         },
       })
     }
+
+    mixpanel.track('Get Groups', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      campusId: campusId,
+      tags: tags,
+    })
+
     return res.send({ groups })
   } catch (error: any) {
     console.error(`[ERROR] [Get Groups By Campus and Tags] Unexpected Error: ${error.message}`)

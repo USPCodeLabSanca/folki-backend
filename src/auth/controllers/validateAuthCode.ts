@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import prisma from '../../db'
 import authSettings from '../../settings/auth'
 import createToken from '../services/createToken'
+import mixpanel from '../../utils/mixpanel'
 
 const validateAuthCode = async (req: Request, res: Response) => {
   const { userId, authCode } = req.body
@@ -16,7 +17,6 @@ const validateAuthCode = async (req: Request, res: Response) => {
 
     if (user.authTimesTried === authSettings.tryLimits) {
       const intervalFromLastTry = new Date().getTime() - user.lastAuthTry!.getTime()
-      console.log(intervalFromLastTry)
       if (intervalFromLastTry < authSettings.tryInterval)
         return res.status(400).send({
           title: 'Erro de Autenticação',
@@ -40,6 +40,10 @@ const validateAuthCode = async (req: Request, res: Response) => {
 
     if (!userAuth)
       return res.status(400).send({ title: 'Erro de Autenticação', message: 'Código de Autenticação Inválido' })
+
+    mixpanel.track('Email Validated', {
+      distinct_id: user.email,
+    })
 
     await prisma.user_auth.deleteMany({ where: { userId: Number(userId) } })
     await prisma.user.update({

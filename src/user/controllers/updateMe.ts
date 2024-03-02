@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const updateMe = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -15,6 +16,11 @@ const updateMe = async (req: Request, res: Response) => {
 
     // @ts-ignore
     delete updatedUser.securePin
+
+    mixpanel.track('Update User', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+    })
 
     res.send({ user: updatedUser })
   } catch (error: any) {

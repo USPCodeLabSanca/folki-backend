@@ -3,6 +3,7 @@ import { verifyUSPEmail } from '../auth.utils'
 import prisma from '../../db'
 import authSettings from '../../settings/auth'
 import { sendEmail } from '../services/sendEmail'
+import mixpanel from '../../utils/mixpanel'
 
 const sendAuthEmail = async (req: Request, res: Response) => {
   const { email } = req.body
@@ -16,6 +17,11 @@ const sendAuthEmail = async (req: Request, res: Response) => {
     let user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) user = await prisma.user.create({ data: { name: email, email } })
+
+    mixpanel.track('Send Auth Email', {
+      // @ts-ignore
+      distinct_id: user!.email,
+    })
 
     if (user.authTimesTried === authSettings.tryLimits) {
       const intervalFromLastTry = new Date().getTime() - user.lastAuthTry!.getTime()

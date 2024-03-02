@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import mixpanel from '../../utils/mixpanel'
 
 const deleteActivity = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -16,6 +17,12 @@ const deleteActivity = async (req: Request, res: Response) => {
       return res
         .status(403)
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para deletar essa atividade' })
+
+    mixpanel.track('Delete Activity', {
+      // @ts-ignore
+      distinct_id: req.user!.email,
+      activity,
+    })
 
     await prisma.activity.delete({ where: { id: Number(id) } })
     res.send({ succesful: true })
