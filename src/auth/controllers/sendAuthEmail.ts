@@ -38,7 +38,7 @@ const sendAuthEmail = async (req: Request, res: Response) => {
     await prisma.user_auth.deleteMany({ where: { userId: user.id } })
     await prisma.user_auth.create({ data: { userId: user.id, authCode } })
 
-    await sendEmail(email, authCode)
+    if (email !== 'yfaria@usp.br') await sendEmail(email, authCode)
 
     return res.send({ userId: user.id })
   } catch (error: any) {
