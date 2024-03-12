@@ -19,6 +19,8 @@ const deleteAbsence = async (req: Request, res: Response) => {
 
     await prisma.user_absence.delete({ where: { id: Number(id) } })
 
+    await prisma.user_subject.update({ where: { id: absence.userSubjectId }, data: { absences: { decrement: 1 } } })
+
     mixpanel.track('Delete Absence', {
       // @ts-ignore
       distinct_id: req.user!.email,
