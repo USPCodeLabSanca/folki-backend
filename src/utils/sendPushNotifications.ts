@@ -1,7 +1,7 @@
 import { Expo, ExpoPushMessage } from 'expo-server-sdk'
 
 async function sendPushNotifications(pushTokens: string[], title: string, body: string, data?: any): Promise<void> {
-  let expo = new Expo()
+  let expo = new Expo({ useFCM: true })
 
   let messages: ExpoPushMessage[] = []
   for (let pushToken of pushTokens) {
@@ -18,8 +18,6 @@ async function sendPushNotifications(pushTokens: string[], title: string, body: 
 
   let chunks = expo.chunkPushNotifications(messages)
   let tickets = []
-
-  console.log(chunks)
 
   for (let chunk of chunks) {
     try {
