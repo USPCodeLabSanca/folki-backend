@@ -1,4 +1,4 @@
-import { Expo, ExpoPushMessage } from 'expo-server-sdk'
+import Expo, { ExpoPushMessage } from './ExpoClient'
 
 async function sendPushNotifications(pushTokens: string[], title: string, body: string, data?: any): Promise<void> {
   let expo = new Expo({ useFCM: true })
