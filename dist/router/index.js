@@ -1,0 +1,28 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(require("express"));
+var campus_router_1 = __importDefault(require("../campus/campus.router"));
+var institute_router_1 = __importDefault(require("../institute/institute.router"));
+var course_router_1 = __importDefault(require("../course/course.router"));
+var subject_router_1 = __importDefault(require("../subject/subject.router"));
+var auth_router_1 = __importDefault(require("../auth/auth.router"));
+var user_router_1 = __importDefault(require("../user/user.router"));
+var absence_router_1 = __importDefault(require("../absence/absence.router"));
+var activity_router_1 = __importDefault(require("../activity/activity.router"));
+var group_router_1 = __importDefault(require("../group/group.router"));
+var drive_router_1 = __importDefault(require("../drive/drive.router"));
+var router = express_1.default.Router();
+router.use('/campuses', campus_router_1.default);
+router.use('/institutes', institute_router_1.default);
+router.use('/courses', course_router_1.default);
+router.use('/subjects', subject_router_1.default);
+router.use('/auth', auth_router_1.default);
+router.use('/users', user_router_1.default);
+router.use('/absences', absence_router_1.default);
+router.use('/activities', activity_router_1.default);
+router.use('/groups', group_router_1.default);
+router.use('/drive', drive_router_1.default);
+exports.default = router;
