@@ -41,5 +41,9 @@
     "nodemon": "^3.0.3",
     "prisma": "^5.8.1",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "npm": "18.19.0",
+    "node": "10.2.3"
   }
 }
