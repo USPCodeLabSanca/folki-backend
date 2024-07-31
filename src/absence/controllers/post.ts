@@ -6,21 +6,21 @@ const post = async (req: Request, res: Response) => {
   // @ts-ignore
   const { user, body, params } = req
   const { date } = body
-  const { id: subjectId } = params
+  const { id: subjectClassId } = params
 
-  if (!subjectId || !date)
+  if (!subjectClassId || !date)
     return res.status(400).send({ title: 'Dados inválidos', message: 'Por favor, insira os dados corretamente' })
 
   try {
     const userSubject = await prisma.user_subject.findFirst({
-      where: { userId: user!.id, subjectId: Number(subjectId) },
+      where: { userId: user!.id, subjectClassId: Number(subjectClassId) },
     })
     if (!userSubject)
       return res.status(404).send({ title: 'Matéria não encontrada', message: 'Matéria não encontrada' })
 
     await prisma.$transaction([
       prisma.user_absence.create({
-        data: { userSubjectId: userSubject.id, subjectId: Number(subjectId), date, userId: user!.id },
+        data: { userSubjectId: userSubject.id, date, userId: user!.id },
       }),
       prisma.user_subject.update({
         where: { id: userSubject.id },

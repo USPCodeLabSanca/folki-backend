@@ -6,7 +6,7 @@ const createActivity = async (req: Request, res: Response) => {
   // @ts-ignore
   const { user, body } = req
 
-  if (!body || !body.name || !body.finishDate || !body.subjectId || !body.type) {
+  if (!body || !body.name || !body.finishDate || !body.subjectClassId || !body.type) {
     return res.status(400).send({
       title: 'Dados inválidos',
       message: 'Dados inválidos - Verifique se os campos estão preenchidos corretamente',
@@ -14,7 +14,9 @@ const createActivity = async (req: Request, res: Response) => {
   }
 
   try {
-    const userSubject = await prisma.user_subject.findFirst({ where: { userId: user!.id, subjectId: body.subjectId } })
+    const userSubject = await prisma.user_subject.findFirst({
+      where: { userId: user!.id, subjectClassId: body.subjectClassId },
+    })
 
     if (!userSubject) {
       return res.status(404).send({

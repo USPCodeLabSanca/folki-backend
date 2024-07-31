@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import getMe from './controllers/getMe'
 import updateMe from './controllers/updateMe'
-import updateMeSubjects from './controllers/updateMeSubjects'
 import getMeSubjects from './controllers/getMeSubjects'
 import getCoolNumbers from './controllers/getCoolNumbers'
 import getUsersByQuery from './controllers/getUsersByQuery'
 import sendUserNotifications from './controllers/sendUserNotifications'
+import { authFromJupiter } from './controllers/auth'
 
 interface Controller {
   getCoolNumbers: (req: Request, res: Response) => void
@@ -14,7 +14,7 @@ interface Controller {
   getMe: (req: Request, res: Response) => void
   getMeSubjects: (req: Request, res: Response) => void
   updateMe: (req: Request, res: Response) => void
-  updateMeSubjects: (req: Request, res: Response) => void
+  auth: (req: Request, res: Response) => void
 }
 
 const controller: Controller = {
@@ -24,7 +24,7 @@ const controller: Controller = {
   getMe,
   getMeSubjects,
   updateMe,
-  updateMeSubjects,
+  auth: authFromJupiter,
 }
 
 export default controller

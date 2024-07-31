@@ -3,7 +3,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -19,58 +19,38 @@ model campus {
 }
 
 model institute {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  jupiterCode String    @default("")
-  isVisible   Boolean   @default(true)
-  campus      campus    @relation(fields: [campusId], references: [id])
-  campusId    Int
-  courses     course[]
-  subject     subject[]
-  users       user[]
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  isVisible Boolean @default(true)
+  campus    campus? @relation(fields: [campusId], references: [id])
+  campusId  Int?
+  user      user[]
 }
 
 model course {
-  id             Int               @id @default(autoincrement())
-  name           String
-  jupiterCode    String            @default("")
-  jupiterCodeHab String            @default("")
-  institute      institute         @relation(fields: [instituteId], references: [id])
-  instituteId    Int
-  defaultSubject default_subject[]
-  users          user[]
+  id    Int    @id @default(autoincrement())
+  name  String
+  users user[]
 }
 
 model subject {
-  id               Int               @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   name             String
-  code             String            @unique
-  institute        institute         @relation(fields: [instituteId], references: [id])
-  instituteId      Int
-  driveItemsNumber Int               @default(0)
-  defaultSubject   default_subject[]
+  code             String          @unique
+  content          String?
+  driveItemsNumber Int             @default(0)
   subjectClass     subject_class[]
-  user_subject     user_subject[]
   driveItems       drive_item[]
 }
 
-model default_subject {
-  subject   subject @relation(fields: [subjectId], references: [id])
-  subjectId Int
-  course    course  @relation(fields: [courseId], references: [id])
-  courseId  Int
-  period    Int
-
-  @@id([subjectId, courseId])
-}
-
 model subject_class {
-  id            Int     @id @default(autoincrement())
-  subject       subject @relation(fields: [subjectId], references: [id])
+  id            Int            @id @default(autoincrement())
+  subject       subject        @relation(fields: [subjectId], references: [id])
   subjectId     Int
-  professorName String
-  details       String
   availableDays Json
+  year          Int
+  semester      Int
+  user_subject  user_subject[]
 }
 
 model user {
@@ -78,45 +58,32 @@ model user {
   email          String         @unique
   name           String
   institute      institute?     @relation(fields: [instituteId], references: [id])
-  instituteId    Int?
   course         course?        @relation(fields: [courseId], references: [id])
   courseId       Int?
+  instituteId    Int?
   isAdmin        Boolean        @default(false)
   isBlocked      Boolean        @default(false)
   securePin      String?        @default("1234")
-  isVerified     Boolean        @default(false)
-  authTimesTried Int            @default(0)
   notificationId String?
-  lastAuthTry    DateTime?
   createdAt      DateTime       @default(now())
   deletedAt      DateTime?
   updatedAt      DateTime       @updatedAt
   lastLogin      DateTime?
   lastAccess     DateTime?
-  user_auth      user_auth[]
   user_subject   user_subject[]
 }
 
-model user_auth {
-  id        Int      @id @default(autoincrement())
-  user      user     @relation(fields: [userId], references: [id])
-  userId    Int
-  authCode  String
-  createdAt DateTime @default(now())
-}
-
 model user_subject {
-  id            Int            @id @default(autoincrement())
-  user          user           @relation(fields: [userId], references: [id])
-  userId        Int
-  subject       subject        @relation(fields: [subjectId], references: [id])
-  subjectId     Int
-  absences      Int            @default(0)
-  grading       Float          @default(0)
-  createdAt     DateTime       @default(now())
-  availableDays Json
-  user_absences user_absence[]
-  activity      activity[]
+  id             Int            @id @default(autoincrement())
+  user           user           @relation(fields: [userId], references: [id])
+  userId         Int
+  subjectClass   subject_class  @relation(fields: [subjectClassId], references: [id])
+  subjectClassId Int
+  absences       Int            @default(0)
+  grading        Float          @default(0)
+  createdAt      DateTime       @default(now())
+  user_absences  user_absence[]
+  activity       activity[]
 }
 
 model user_absence {
@@ -125,7 +92,6 @@ model user_absence {
   createdAt     DateTime     @default(now())
   userSubject   user_subject @relation(fields: [userSubjectId], references: [id])
   userId        Int
-  subjectId     Int
   userSubjectId Int
 }
 
