@@ -9,7 +9,7 @@ const getAllActivities = async (req: Request, res: Response) => {
     const activities = await prisma.activity.findMany({
       where: { userId: user!.id },
       orderBy: { finishDate: 'asc' },
-      include: { userSubject: { include: { subjectClass: { include: { subject: true } } } } },
+      include: { subjectClass: { include: { subject: true } }, user: { select: { name: true } } },
     })
 
     const notFinishedActivities = activities.filter((activity) => {

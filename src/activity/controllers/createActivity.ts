@@ -14,21 +14,9 @@ const createActivity = async (req: Request, res: Response) => {
   }
 
   try {
-    const userSubject = await prisma.user_subject.findFirst({
-      where: { userId: user!.id, subjectClassId: body.subjectClassId },
-    })
-
-    if (!userSubject) {
-      return res.status(404).send({
-        title: 'Matéria não encontrada',
-        message: 'Matéria não encontrada - Verifique se a matéria está corretamente cadastrada',
-      })
-    }
-
     const activity = await prisma.activity.create({
       data: {
         ...body,
-        userSubjectId: userSubject.id,
         userId: user!.id,
       },
     })

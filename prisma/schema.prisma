@@ -51,6 +51,7 @@ model subject_class {
   year          Int
   semester      Int
   user_subject  user_subject[]
+  activity      activity[]
 }
 
 model user {
@@ -71,6 +72,7 @@ model user {
   lastLogin      DateTime?
   lastAccess     DateTime?
   user_subject   user_subject[]
+  activity       activity[]
 }
 
 model user_subject {
@@ -83,7 +85,6 @@ model user_subject {
   grading        Float          @default(0)
   createdAt      DateTime       @default(now())
   user_absences  user_absence[]
-  activity       activity[]
 }
 
 model user_absence {
@@ -96,21 +97,21 @@ model user_absence {
 }
 
 model activity {
-  id            Int          @id @default(autoincrement())
-  name          String
-  description   String
-  value         Float?
-  userValue     Float        @default(0)
-  completed     Boolean      @default(false)
-  userSubject   user_subject @relation(fields: [userSubjectId], references: [id])
-  userSubjectId Int
-  userId        Int
-  subjectId     Int
-  type          ActivityType
-  finishDate    DateTime
-  completedAt   DateTime?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id             Int           @id @default(autoincrement())
+  name           String
+  description    String
+  value          Float?
+  userValue      Float         @default(0)
+  completed      Boolean       @default(false)
+  userId         Int
+  subjectClassId Int
+  subjectClass   subject_class @relation(fields: [subjectClassId], references: [id])
+  user           user          @relation(fields: [userId], references: [id])
+  type           ActivityType
+  finishDate     DateTime
+  completedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model group {

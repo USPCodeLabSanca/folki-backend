@@ -14,7 +14,11 @@ const updateActivity = async (req: Request, res: Response) => {
     if (!activity)
       return res.status(400).send({ title: 'Atividade não encontrada', message: 'Atividade não encontrada' })
 
-    if (activity.userId !== user!.id)
+    const isUserInTheActivitySubjectClass = await prisma.user_subject.findFirst({
+      where: { userId: user!.id, subjectClassId: activity.subjectClassId },
+    })
+
+    if (!isUserInTheActivitySubjectClass)
       return res
         .status(403)
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para atualizar essa atividade' })
