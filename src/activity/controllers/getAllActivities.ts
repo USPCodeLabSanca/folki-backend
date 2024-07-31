@@ -6,10 +6,19 @@ const getAllActivities = async (req: Request, res: Response) => {
   const { user } = req
 
   try {
-    const activities = await prisma.activity.findMany({
+    let activities = await prisma.activity.findMany({
       where: { userId: user!.id },
       orderBy: { finishDate: 'asc' },
       include: { subjectClass: { include: { subject: true } }, user: { select: { name: true } } },
+    })
+
+    const activityChecks = await prisma.user_activity_check.findMany({
+      where: { userId: user!.id },
+    })
+
+    activities = activities.map((activity) => {
+      const checked = activityChecks.find((check) => check.activityId === activity.id)
+      return { ...activity, checked: !!checked }
     })
 
     const notFinishedActivities = activities.filter((activity) => {
