@@ -71,6 +71,7 @@ model user {
   updatedAt      DateTime       @updatedAt
   lastLogin      DateTime?
   lastAccess     DateTime?
+  userVersion    String?
   user_subject   user_subject[]
   activity       activity[]
 }
@@ -155,9 +156,22 @@ model drive_item {
   subjectId Int
 }
 
+model important_date {
+  id           Int            @id @default(autoincrement())
+  name         String
+  date         DateTime
+  type         ImportDateType
+  shouldNotify Boolean        @default(false)
+}
+
 enum ActivityType {
   EXAM
   HOMEWORK
   ACTIVITY
   LIST
+}
+
+enum ImportDateType {
+  DAY_OFF
+  GENERAL
 }
