@@ -92,7 +92,7 @@ const getScrapJupiter = async (nUsp: string, password: string): Promise<user> =>
           if (!hash[subject]) {
             hash[subject] = [
               {
-                weekDay: weekDays[tdIndex - 3],
+                day: weekDays[tdIndex - 3],
                 start: startHour,
                 end: lastHour,
               },
@@ -126,7 +126,8 @@ const getScrapJupiter = async (nUsp: string, password: string): Promise<user> =>
 
     for (let subjectCode of notRegisteredSubjectCodes) {
       page.$eval(`.${subjectCode}`, (element: any) => element.click())
-      await page.waitForSelector(".conteudo[style='display: block;']")
+      //await page.waitForSelector(".conteudo[style='display: block;']")
+      await page.waitForSelector(`xpath///*[@class="coddis" and text()="${subjectCode}"]`)
       const subjectName = await page.evaluate(
         // @ts-ignore
         () => document.querySelector('.nomdis')?.textContent,
