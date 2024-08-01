@@ -25,10 +25,6 @@ const updateActivity = async (req: Request, res: Response) => {
 
     await prisma.activity.update({ where: { id: Number(id) }, data: { ...body } })
 
-    if (body.completed) {
-      await prisma.activity.update({ where: { id: Number(id) }, data: { completedAt: new Date() } })
-    }
-
     res.send({ succesful: true })
   } catch (error: any) {
     console.error(`[ERROR] [Update Activity] Unexpected Error: ${error.message}`)

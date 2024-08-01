@@ -103,15 +103,12 @@ model activity {
   name                String
   description         String
   value               Float?
-  userValue           Float                 @default(0)
-  completed           Boolean               @default(false)
   userId              Int
   subjectClassId      Int
   subjectClass        subject_class         @relation(fields: [subjectClassId], references: [id])
   user                user                  @relation(fields: [userId], references: [id])
   type                ActivityType
   finishDate          DateTime
-  completedAt         DateTime?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   user_activity_check user_activity_check[]
