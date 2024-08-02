@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "postinstall": "tsc && npx prisma migrate deploy",
+    "heroku-postbuild": "bash postbuild.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
