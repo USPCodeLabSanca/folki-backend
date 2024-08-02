@@ -238,6 +238,7 @@ const getScrapJupiter = async (nUsp: string, password: string): Promise<user> =>
   } catch (error: any) {
     await browser.close()
 
+    console.log(error.message)
     if (error.message === 'Failed to launch the browser process!') {
       console.log('[ERROR] Error Scraping Jupiter: Memory Error - Retry')
       await new Promise((resolve) => setTimeout(resolve, 1500))
