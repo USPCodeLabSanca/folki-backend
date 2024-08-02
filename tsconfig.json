@@ -11,7 +11,8 @@
       "esModuleInterop": true,
       "resolveJsonModule": true,
       "types": ["jest", "node"],
-      "typeRoots": ["./@types", "./node_modules/@types"]
+      "typeRoots": ["./@types", "./node_modules/@types"],
+      "skipLibCheck": true
     },
     "exclude": ["dist", "./src/__tests__/**", "jest.config.ts"]
 }
