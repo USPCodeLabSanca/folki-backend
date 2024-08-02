@@ -7,7 +7,7 @@ const getAllActivities = async (req: Request, res: Response) => {
 
   try {
     let activities = await prisma.activity.findMany({
-      where: { userId: user!.id },
+      where: { subjectClass: { user_subject: { some: { userId: user!.id } } } },
       orderBy: { finishDate: 'asc' },
       include: {
         subjectClass: { include: { subject: { select: { id: true, name: true } } } },
