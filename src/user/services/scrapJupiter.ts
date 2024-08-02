@@ -211,7 +211,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
     let user = await prisma.user.findFirst({ where: { email } })
 
-    console.log('[INTERNAL TESTING] USER: ', email)
+    console.log('[INTERNAL TESTING] USER: ', user)
 
     if (!user) {
       user = await prisma.user.create({
