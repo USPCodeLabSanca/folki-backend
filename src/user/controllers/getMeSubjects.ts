@@ -10,7 +10,10 @@ const getMeSubjects = async (req: Request, res: Response) => {
   delete body.securePin
 
   try {
-    const userSubjects = await prisma.user_subject.findMany({ where: { userId: user!.id }, include: { subject: true } })
+    const userSubjects = await prisma.user_subject.findMany({
+      where: { userId: user!.id },
+      include: { subjectClass: { include: { subject: true } } },
+    })
     res.send({ userSubjects })
   } catch (error: any) {
     console.error(`[ERROR] [User Get Me Subjects] Unexpected User Get: ${error.message}`)

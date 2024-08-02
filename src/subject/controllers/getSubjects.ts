@@ -1,9 +1,6 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
-import { searchSubjects } from '../services/searchSubjects'
-import { orderSubjectsByPreferenceCampus } from '../services/orderSubjectsByPreferenceCampus'
 import { Subject } from '../subject.entity'
-import { orderSubjectsByPreferenceInstitute } from '../services/orderSubjectsByPreferenceInstitute'
 
 const getSubjects = async (req: Request, res: Response) => {
   const { search, preferenceCampus, preferenceInstitute } = req.query
@@ -11,19 +8,7 @@ const getSubjects = async (req: Request, res: Response) => {
   try {
     let subjects: Subject[] = []
 
-    if (search) {
-      subjects = await searchSubjects(String(search))
-    } else {
-      subjects = await prisma.subject.findMany({ include: { subjectClass: true, institute: true } })
-    }
-
-    if (preferenceCampus) {
-      subjects = await orderSubjectsByPreferenceCampus(subjects, Number(preferenceCampus))
-    }
-
-    if (preferenceInstitute) {
-      subjects = await orderSubjectsByPreferenceInstitute(subjects, Number(preferenceInstitute))
-    }
+    subjects = await prisma.subject.findMany({ include: { subjectClass: true } })
 
     return res.send(subjects)
   } catch (error) {

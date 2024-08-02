@@ -41,21 +41,6 @@ services:
       - 6379:6379
     volumes:
       - redis_db_data:/data
-      
-  bullboard:
-    container_name: bullboard
-    image: deadly0/bull-board
-    restart: always
-    ports:
-      - 5555:5555
-    environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      PORT: 5555
-      REDIS_USE_TLS: 'false'
-      BULL_PREFIX: bull
-    depends_on:
-      - redis
 
 volumes:
   postgres_data:

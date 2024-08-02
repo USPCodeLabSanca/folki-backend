@@ -8,7 +8,7 @@ const getAllFromSubject = async (req: Request, res: Response) => {
 
   try {
     const absences = await prisma.user_absence.findMany({
-      where: { userId: user!.id, subjectId: Number(id) },
+      where: { userId: user!.id, userSubjectId: Number(id) },
       orderBy: { date: 'desc' },
     })
     res.send({ absences })

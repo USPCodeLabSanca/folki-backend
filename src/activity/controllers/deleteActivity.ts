@@ -13,7 +13,11 @@ const deleteActivity = async (req: Request, res: Response) => {
     if (!activity)
       return res.status(400).send({ title: 'Atividade não encontrada', message: 'Atividade não encontrada' })
 
-    if (activity.userId !== user!.id)
+    const isUserInTheActivitySubjectClass = await prisma.user_subject.findFirst({
+      where: { userId: user!.id, subjectClassId: activity.subjectClassId },
+    })
+
+    if (!isUserInTheActivitySubjectClass)
       return res
         .status(403)
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para deletar essa atividade' })
@@ -24,6 +28,7 @@ const deleteActivity = async (req: Request, res: Response) => {
       activity,
     })
 
+    await prisma.user_activity_check.deleteMany({ where: { activityId: Number(id) } })
     await prisma.activity.delete({ where: { id: Number(id) } })
     res.send({ succesful: true })
   } catch (error: any) {
