@@ -8,10 +8,14 @@ const userInfoJupiterLink = `https://uspdigital.usp.br/jupiterweb/uspDadosPessoa
 
 // Yes, this code is totally a mess
 // Yes, I know SOLID
-const getScrapJupiter = async (nUsp: string, password: string): Promise<user> => {
+const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0): Promise<user> => {
   let browser
 
   try {
+    if (retry === 10) {
+      throw new Error('Max retries reached')
+    }
+
     browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true })
     const page = await browser.newPage()
     await page.setUserAgent(
@@ -202,9 +206,12 @@ const getScrapJupiter = async (nUsp: string, password: string): Promise<user> =>
     const emails = allFontsTexts.filter((text: string) => text!.includes('@'))
     const email = emails.find((email: string) => email!.includes('usp.br')) || emails[0]
 
+    console.log('[INTERNAL TESTING] EMAIL: ', email)
     await browser.close()
 
     let user = await prisma.user.findFirst({ where: { email } })
+
+    console.log('[INTERNAL TESTING] USER: ', email)
 
     if (!user) {
       user = await prisma.user.create({
@@ -239,12 +246,10 @@ const getScrapJupiter = async (nUsp: string, password: string): Promise<user> =>
   } catch (error: any) {
     if (browser) await browser.close()
 
-    console.log('TESTING ERROR MESAGE')
-    console.log(error.message)
-    if (error.message === 'Failed to launch the browser process!') {
-      console.log('[ERROR] Error Scraping Jupiter: Memory Error - Retry')
+    if (error.message.includes('Failed to launch the browser process!')) {
+      console.log('[ERROR] Error Scraping Jupiter: Memory Error - Retry ')
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      return getScrapJupiter(nUsp, password)
+      return getScrapJupiter(nUsp, password, retry + 1)
     }
 
     throw error
