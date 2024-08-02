@@ -130,7 +130,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     )
 
     for (let subjectCode of notRegisteredSubjectCodes) {
-      page.$eval(`.${subjectCode}`, (element: any) => element.click())
+      page.$eval(`span[class="${subjectCode}"]`, (element: any) => element.click())
       //await page.waitForSelector(".conteudo[style='display: block;']")
       await page.waitForSelector(`xpath///*[@class="coddis" and text()="${subjectCode}"]`)
       const subjectName = await page.evaluate(
@@ -206,12 +206,9 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     const emails = allFontsTexts.filter((text: string) => text!.includes('@'))
     const email = emails.find((email: string) => email!.includes('usp.br')) || emails[0]
 
-    console.log('[INTERNAL TESTING] EMAIL: ', email)
     await browser.close()
 
     let user = await prisma.user.findFirst({ where: { email } })
-
-    console.log('[INTERNAL TESTING] USER: ', user)
 
     if (!user) {
       user = await prisma.user.create({
