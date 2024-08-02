@@ -9,9 +9,10 @@ const userInfoJupiterLink = `https://uspdigital.usp.br/jupiterweb/uspDadosPessoa
 // Yes, this code is totally a mess
 // Yes, I know SOLID
 const getScrapJupiter = async (nUsp: string, password: string): Promise<user> => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true })
+  let browser
 
   try {
+    browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true })
     const page = await browser.newPage()
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
