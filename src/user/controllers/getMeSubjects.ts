@@ -13,6 +13,7 @@ const getMeSubjects = async (req: Request, res: Response) => {
     const userSubjects = await prisma.user_subject.findMany({
       where: { userId: user!.id },
       include: { subjectClass: { include: { subject: true } } },
+      orderBy: { subjectClass: { subject: { name: 'asc' } } },
     })
     res.send({ userSubjects })
   } catch (error: any) {
