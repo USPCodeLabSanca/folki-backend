@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
+import getActivityDate from '../../utils/getActivityDate'
+import sendPushNotifications from '../../utils/sendPushNotifications'
 
 const updateActivity = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -9,6 +11,18 @@ const updateActivity = async (req: Request, res: Response) => {
   delete body.userId
 
   try {
+    const subjectClass = await prisma.subject_class.findFirst({
+      where: { id: body.subjectClassId, user_subject: { some: { userId: user!.id } } },
+      include: { subject: true },
+    })
+
+    if (!subjectClass) {
+      return res.status(400).send({
+        title: 'Disciplina inválida',
+        message: 'Disciplina inválida - Verifique se a disciplina selecionada é válida',
+      })
+    }
+
     const activity = await prisma.activity.findUnique({ where: { id: Number(id) } })
 
     if (!activity)
@@ -24,6 +38,24 @@ const updateActivity = async (req: Request, res: Response) => {
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para atualizar essa atividade' })
 
     await prisma.activity.update({ where: { id: Number(id) }, data: { ...body } })
+
+    const isSameDate = new Date(activity.finishDate).toDateString() === new Date(body.finishDate).toDateString()
+
+    if (!isSameDate) {
+      const usersToSendNotifications = await prisma.user.findMany({
+        where: { user_subject: { some: { subjectClassId: body.subjectClassId } }, notificationId: { not: null } },
+      })
+      const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
+
+      const userFirstName = user!.name.split(' ')[0]
+
+      const title = `Data da Atividade de ${subjectClass.subject.name} Atualizada`
+      const textBody = `A Atividade "${body.name}" Foi Atualizada para ${getActivityDate(
+        body.finishDate,
+      )} por ${userFirstName}.`
+
+      await sendPushNotifications(pushIds, title, textBody)
+    }
 
     res.send({ succesful: true })
   } catch (error: any) {

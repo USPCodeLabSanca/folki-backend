@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import prisma from '../../db'
 import mixpanel from '../../utils/mixpanel'
+import getActivityDate from '../../utils/getActivityDate'
+import sendPushNotifications from '../../utils/sendPushNotifications'
 
 const createActivity = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -14,12 +16,38 @@ const createActivity = async (req: Request, res: Response) => {
   }
 
   try {
+    const subjectClass = await prisma.subject_class.findFirst({
+      where: { id: body.subjectClassId, user_subject: { some: { userId: user!.id } } },
+      include: { subject: true },
+    })
+
+    if (!subjectClass) {
+      return res.status(400).send({
+        title: 'Disciplina inválida',
+        message: 'Disciplina inválida - Verifique se a disciplina selecionada é válida',
+      })
+    }
+
     const activity = await prisma.activity.create({
       data: {
         ...body,
         userId: user!.id,
       },
     })
+
+    const usersToSendNotifications = await prisma.user.findMany({
+      where: { user_subject: { some: { subjectClassId: body.subjectClassId } }, notificationId: { not: null } },
+    })
+    const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
+
+    const userFirstName = user!.name.split(' ')[0]
+
+    const title = `Nova Atividade de ${subjectClass.subject.name}`
+    const textBody = `A Atividade "${body.name}" Foi Adicionada para ${getActivityDate(
+      body.finishDate,
+    )} por ${userFirstName}.`
+
+    await sendPushNotifications(pushIds, title, textBody)
 
     mixpanel.track('Add Activity', {
       // @ts-ignore
