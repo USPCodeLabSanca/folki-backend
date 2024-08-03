@@ -87,6 +87,7 @@ model user_subject {
   grading        Float          @default(0)
   createdAt      DateTime       @default(now())
   user_absences  user_absence[]
+  grade          grade[]
 }
 
 model user_absence {
@@ -172,6 +173,16 @@ model user_activity_check {
 
   @@id([userId, activityId])
   @@index([userId, activityId])
+}
+
+model grade {
+  id            Int          @id @default(autoincrement())
+  name          String
+  value         Float
+  percentage    Float
+  userSubjectId Int
+  createdAt     DateTime     @default(now())
+  userSubject   user_subject @relation(fields: [userSubjectId], references: [id])
 }
 
 enum ActivityType {
