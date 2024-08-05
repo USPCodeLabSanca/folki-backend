@@ -202,7 +202,9 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       Array.from(document.querySelectorAll("td[width='77%'] font")).map((element: any) => element.textContent),
     )
 
-    const name = all77WidthFontTexts[1]
+    // For edge cases (we can't find the user email), we'll use "Estudante USP" as name
+    // This edge case occur when the user is children of an employee
+    const name = all77WidthFontTexts[1] || 'Estudante USP'
     const emails = allFontsTexts.filter((text: string) => text!.includes('@'))
     // For edge cases (we can't find the user email), we'll use the nusp as email
     // This edge case occur when the user is children of an employee
