@@ -208,6 +208,8 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
     await browser.close()
 
+    if (!email) throw new Error('Email not found')
+
     let user = await prisma.user.findFirst({ where: { email } })
 
     if (!user) {
