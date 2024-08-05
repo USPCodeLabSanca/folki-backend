@@ -204,11 +204,9 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
     const name = all77WidthFontTexts[1]
     const emails = allFontsTexts.filter((text: string) => text!.includes('@'))
-    const email = emails.find((email: string) => email!.includes('usp.br')) || emails[0]
+    const email = emails.find((email: string) => email!.includes('usp.br')) || emails[0] || nUsp
 
     await browser.close()
-
-    if (!email) throw new Error('Email not found')
 
     let user = await prisma.user.findFirst({ where: { email } })
 
