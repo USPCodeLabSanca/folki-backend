@@ -25,10 +25,11 @@ const authFromJupiter = async (req: Request, res: Response) => {
       })
     }
 
-    if (error.message === 'Email not found')
+    if (error.message.includes('Waiting failed: 30000ms exceeded'))
       return res.status(400).send({
-        title: 'Login Inválido =/',
-        message: 'Não foi possível fazer autenticação porque seu usuário não permite acessar seus dados de Email :|',
+        title: 'Ei, tente novamente mais tarde!',
+        message:
+          'Esse é um erro de comunicação com o Jupiter! Entre em comunicação com yfaria@usp.br para reportar o erro.',
       })
 
     console.error(`[ERROR] [Get Subjects By Jupiter Web] Unexpected User Get: ${error.message}`)
