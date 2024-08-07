@@ -43,7 +43,10 @@ const updateActivity = async (req: Request, res: Response) => {
 
     if (!isSameDate) {
       const usersToSendNotifications = await prisma.user.findMany({
-        where: { user_subject: { some: { subjectClassId: body.subjectClassId } }, notificationId: { not: null } },
+        where: {
+          user_subject: { some: { subjectClassId: Number(body.subjectClassId) } },
+          notificationId: { not: null },
+        },
       })
       const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
 
