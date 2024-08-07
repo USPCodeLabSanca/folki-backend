@@ -36,15 +36,15 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     })
     await page.click("a[href='gradeHoraria?codmnu=4759']")
 
-    await page.waitForSelector("select[name='codpgm']")
-    await page.waitForSelector("select[name='codpgm'] option[value='1']")
+    await page.waitForSelector('select')
+    await page.waitForSelector('option:nth-child(2)')
 
     const options = await page.evaluate(() =>
       // @ts-ignore
-      Array.from(document.querySelectorAll("select[name='codpgm'] option")).map((element: any) => element.value),
+      Array.from(document.querySelectorAll('option')).map((element: any) => element.value),
     )
 
-    await page.select(`select[name='codpgm']`, options[options.length - 1])
+    await page.select(`select`, options[options.length - 1])
 
     await page.click('#buscar')
 
