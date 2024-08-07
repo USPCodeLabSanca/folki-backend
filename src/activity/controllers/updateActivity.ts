@@ -12,7 +12,7 @@ const updateActivity = async (req: Request, res: Response) => {
 
   try {
     const subjectClass = await prisma.subject_class.findFirst({
-      where: { id: body.subjectClassId, user_subject: { some: { userId: user!.id } } },
+      where: { id: Number(body.subjectClassId), user_subject: { some: { userId: user!.id } } },
       include: { subject: true },
     })
 
