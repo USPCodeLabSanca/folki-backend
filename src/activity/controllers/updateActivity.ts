@@ -50,12 +50,8 @@ const updateActivity = async (req: Request, res: Response) => {
       })
       const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
 
-      const userFirstName = user!.name.split(' ')[0]
-
       const title = `Data da Atividade de ${subjectClass.subject.name} Atualizada`
-      const textBody = `A Atividade "${body.name}" Foi Atualizada para ${getActivityDate(
-        body.finishDate,
-      )} por ${userFirstName}.`
+      const textBody = `A Atividade "${body.name}" Foi Atualizada para ${getActivityDate(body.finishDate)}.`
 
       await sendPushNotifications(pushIds, title, textBody)
     }
