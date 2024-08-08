@@ -40,12 +40,8 @@ const createActivity = async (req: Request, res: Response) => {
     })
     const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
 
-    const userFirstName = user!.name.split(' ')[0]
-
     const title = `Nova Atividade de ${subjectClass.subject.name}`
-    const textBody = `A Atividade "${body.name}" Foi Adicionada para ${getActivityDate(
-      body.finishDate,
-    )} por ${userFirstName}.`
+    const textBody = `A Atividade "${body.name}" Foi Adicionada para ${getActivityDate(body.finishDate)}.`
 
     await sendPushNotifications(pushIds, title, textBody)
 
