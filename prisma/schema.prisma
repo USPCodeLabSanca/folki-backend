@@ -109,7 +109,7 @@ model activity {
   subjectClass        subject_class         @relation(fields: [subjectClassId], references: [id])
   user                user                  @relation(fields: [userId], references: [id])
   type                ActivityType
-  finishDate          DateTime
+  finishDate          DateTime              @db.Date
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   user_activity_check user_activity_check[]

@@ -28,6 +28,17 @@ const createActivity = async (req: Request, res: Response) => {
       })
     }
 
+    const alreadyCreatedActivity = await prisma.activity.findFirst({
+      where: { subjectClassId: body.subjectClassId, type: body.type, finishDate: body.finishDate },
+    })
+
+    if (alreadyCreatedActivity) {
+      return res.status(400).send({
+        title: 'Atividade já existente!',
+        message: 'Atividade já existente - Verifique se a atividade já foi adicionada',
+      })
+    }
+
     const activity = await prisma.activity.create({
       data: {
         ...body,
