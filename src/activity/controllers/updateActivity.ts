@@ -37,6 +37,13 @@ const updateActivity = async (req: Request, res: Response) => {
         .status(403)
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para atualizar essa atividade' })
 
+    if (user?.isBlocked) {
+      return res.status(403).send({
+        title: 'Permissão negada',
+        message: 'Você foi bloqueado do Folki não tem permissão para atualizar atividades',
+      })
+    }
+
     await prisma.activity.update({ where: { id: Number(id) }, data: { ...body } })
 
     const isSameDate = new Date(activity.finishDate).toDateString() === new Date(body.finishDate).toDateString()

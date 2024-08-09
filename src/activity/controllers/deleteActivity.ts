@@ -26,6 +26,13 @@ const deleteActivity = async (req: Request, res: Response) => {
         .status(403)
         .send({ title: 'Permissão negada', message: 'Você não tem permissão para deletar essa atividade' })
 
+    if (user?.isBlocked) {
+      return res.status(403).send({
+        title: 'Permissão negada',
+        message: 'Você foi bloqueado do Folki não tem permissão para deletar atividades',
+      })
+    }
+
     mixpanel.track('Delete Activity', {
       // @ts-ignore
       distinct_id: req.user!.email,
