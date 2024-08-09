@@ -21,7 +21,7 @@ const getAllActivities = async (req: Request, res: Response) => {
 
     activities = activities.map((activity) => {
       const checked = activityChecks.find((check) => check.activityId === activity.id)
-      return { ...activity, checked: !!checked }
+      return { ...activity, finishDate: new Date(activity.finishDate.setHours(15)), checked: !!checked }
     })
 
     const notFinishedActivities = activities.filter((activity) => {
