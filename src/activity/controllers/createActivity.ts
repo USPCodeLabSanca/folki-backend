@@ -39,6 +39,13 @@ const createActivity = async (req: Request, res: Response) => {
       })
     }
 
+    if (user?.isBlocked) {
+      return res.status(403).send({
+        title: 'Permissão negada',
+        message: 'Você foi bloqueado do Folki não tem permissão para criar atividades',
+      })
+    }
+
     const activity = await prisma.activity.create({
       data: {
         ...body,
