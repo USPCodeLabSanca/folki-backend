@@ -3,10 +3,13 @@ import prisma from '../../db'
 
 const getImportantDates = async (req: Request, res: Response) => {
   try {
+    // @ts-ignore
+    const { user } = req
     const startOfYear = new Date(new Date().getFullYear(), 0, 1)
+    const userInstitute = await prisma.institute.findUnique({ where: { id: user!.instituteId! } })
     const importantDates = await prisma.important_date.findMany({
       orderBy: { date: 'asc' },
-      where: { date: { gte: startOfYear } },
+      where: { date: { gte: startOfYear }, AND: { OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] } },
     })
 
     return res.send({ importantDates })
