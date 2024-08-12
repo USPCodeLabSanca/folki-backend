@@ -163,7 +163,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       }
     })
 
-    const subjectClassesIds = []
+    const subjectClassesIds: number[] = []
 
     for (const subjectClass of subjectClasses) {
       const dbSubjectClass = await prisma.subject_class.findFirst({
@@ -213,6 +213,30 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     await browser.close()
 
     let user = await prisma.user.findFirst({ where: { email } })
+
+    if (user) {
+      const userSubjectClasses = await prisma.user_subject.findMany({
+        where: { userId: user.id },
+      })
+      const userSubjectClassesIds = userSubjectClasses.map((userSubjectClass) => userSubjectClass.subjectClassId)
+      const userSubjectClassesToRemove = userSubjectClassesIds.filter(
+        (userSubjectClassId) => !subjectClassesIds.includes(userSubjectClassId),
+      )
+
+      if (userSubjectClassesToRemove.length) {
+        await prisma.user_subject.updateMany({
+          where: {
+            userId: user.id,
+            subjectClassId: {
+              in: userSubjectClassesToRemove,
+            },
+          },
+          data: {
+            deletedAt: new Date(),
+          },
+        })
+      }
+    }
 
     if (!user) {
       user = await prisma.user.create({

@@ -86,6 +86,7 @@ model user_subject {
   absences       Int            @default(0)
   grading        Float          @default(0)
   createdAt      DateTime       @default(now())
+  deletedAt      DateTime?
   user_absences  user_absence[]
   grade          grade[]
 }
