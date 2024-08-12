@@ -12,10 +12,11 @@ datasource db {
 }
 
 model campus {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
-  institutes institute[]
-  groups     group[]     @relation("group_campus")
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  institutes     institute[]
+  groups         group[]          @relation("group_campus")
+  important_date important_date[]
 }
 
 model institute {
@@ -162,6 +163,8 @@ model important_date {
   date         DateTime
   type         ImportDateType
   shouldNotify Boolean        @default(false)
+  campusId     Int?
+  campus       campus?        @relation(fields: [campusId], references: [id])
 }
 
 model user_activity_check {
