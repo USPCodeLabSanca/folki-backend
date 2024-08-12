@@ -37,7 +37,6 @@ model subject {
   id               Int             @id @default(autoincrement())
   name             String
   code             String          @unique
-  content          String?
   driveItemsNumber Int             @default(0)
   subjectClass     subject_class[]
   driveItems       drive_item[]

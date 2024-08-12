@@ -149,7 +149,6 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         data: {
           code: newSubjectInfo.subjectCode,
           name: newSubjectInfo.subjectName,
-          content: newSubjectInfo.description,
         },
       })
       subjectsAlreadyRegistered.push(newSubject)
