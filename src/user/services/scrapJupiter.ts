@@ -44,6 +44,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       Array.from(document.querySelectorAll('option')).map((element: any) => element.value),
     )
 
+    options.sort()
     await page.select(`select`, options[options.length - 1])
 
     await page.click('#buscar')
