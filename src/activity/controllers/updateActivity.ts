@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import prisma from '../../db'
 import getActivityDate from '../../utils/getActivityDate'
 import sendPushNotifications from '../../utils/sendPushNotifications'
+import { activity } from '@prisma/client'
+import SubjectClass from '../../types/SubjectClass'
 
 const updateActivity = async (req: Request, res: Response) => {
   // @ts-ignore
@@ -47,20 +49,8 @@ const updateActivity = async (req: Request, res: Response) => {
     await prisma.activity.update({ where: { id: Number(id) }, data: { ...body } })
 
     const isSameDate = new Date(activity.finishDate).toDateString() === new Date(body.finishDate).toDateString()
-
-    if (!isSameDate) {
-      const usersToSendNotifications = await prisma.user.findMany({
-        where: {
-          user_subject: { some: { subjectClassId: Number(body.subjectClassId) } },
-          notificationId: { not: null },
-        },
-      })
-      const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
-
-      const title = `Data da Atividade de ${subjectClass.subject.name} Atualizada`
-      const textBody = `A Atividade "${body.name}" Foi Atualizada para ${getActivityDate(body.finishDate)}.`
-
-      await sendPushNotifications(pushIds, title, textBody)
+    if (!isSameDate && !activity.isPrivate) {
+      await sendUpdateActivityNotification(subjectClass, activity)
     }
 
     res.send({ succesful: true })
@@ -71,6 +61,23 @@ const updateActivity = async (req: Request, res: Response) => {
       message: 'Erro inesperado ao atualizar atividade - Tente novamente mais tarde',
     })
   }
+}
+
+const sendUpdateActivityNotification = async (subjectClass: SubjectClass, activity: activity) => {
+  const usersToSendNotifications = await prisma.user.findMany({
+    where: {
+      user_subject: { some: { subjectClassId: subjectClass.id } },
+      notificationId: { not: null },
+    },
+  })
+  const pushIds: string[] = usersToSendNotifications.map((user) => user.notificationId || '')
+
+  const title = `Data da Atividade de ${subjectClass.subject!.name} Atualizada`
+  const textBody = `A Atividade "${activity.name}" Foi Atualizada para ${getActivityDate(
+    activity.finishDate.toString(),
+  )}.`
+
+  await sendPushNotifications(pushIds, title, textBody)
 }
 
 export { updateActivity }
