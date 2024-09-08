@@ -13,8 +13,13 @@ const updateActivity = async (req: Request, res: Response) => {
   delete body.userId
 
   try {
+    const activity = await prisma.activity.findUnique({ where: { id: Number(id) } })
+
+    if (!activity)
+      return res.status(400).send({ title: 'Atividade não encontrada', message: 'Atividade não encontrada' })
+
     const subjectClass = await prisma.subject_class.findFirst({
-      where: { id: Number(body.subjectClassId), user_subject: { some: { userId: user!.id } } },
+      where: { id: activity.subjectClassId, user_subject: { some: { userId: user!.id } } },
       include: { subject: true },
     })
 
@@ -24,11 +29,6 @@ const updateActivity = async (req: Request, res: Response) => {
         message: 'Disciplina inválida - Verifique se a disciplina selecionada é válida',
       })
     }
-
-    const activity = await prisma.activity.findUnique({ where: { id: Number(id) } })
-
-    if (!activity)
-      return res.status(400).send({ title: 'Atividade não encontrada', message: 'Atividade não encontrada' })
 
     const isUserInTheActivitySubjectClass = await prisma.user_subject.findFirst({
       where: { userId: user!.id, subjectClassId: activity.subjectClassId },

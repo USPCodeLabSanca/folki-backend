@@ -114,6 +114,7 @@ model activity {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   isPrivate           Boolean               @default(false)
+  deletedAt           DateTime?
   user_activity_check user_activity_check[]
 }
 

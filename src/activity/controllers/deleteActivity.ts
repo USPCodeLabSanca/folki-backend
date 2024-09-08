@@ -44,8 +44,7 @@ const deleteActivity = async (req: Request, res: Response) => {
       activity,
     })
 
-    await prisma.user_activity_check.deleteMany({ where: { activityId: Number(id) } })
-    await prisma.activity.delete({ where: { id: Number(id) } })
+    await prisma.activity.update({ where: { id: Number(id) }, data: { deletedAt: new Date() } })
 
     if (!activity.isPrivate) await sendDeleteActivityNotification(activity.subjectClass, activity)
 
