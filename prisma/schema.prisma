@@ -113,6 +113,7 @@ model activity {
   finishDate          DateTime              @db.Date
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
+  isPrivate           Boolean               @default(false)
   user_activity_check user_activity_check[]
 }
 
