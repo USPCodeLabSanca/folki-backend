@@ -29,9 +29,19 @@ const getAllActivities = async (req: Request, res: Response) => {
       where: { userId: user!.id },
     })
 
+    const activityIgnore = await prisma.user_activity_ignore.findMany({
+      where: { userId: user!.id },
+    })
+
     activities = activities.map((activity) => {
       const checked = activityChecks.find((check) => check.activityId === activity.id)
-      return { ...activity, finishDate: new Date(activity.finishDate.setHours(15)), checked: !!checked }
+      const ignored = activityIgnore.find((ignore) => ignore.activityId === activity.id)
+      return {
+        ...activity,
+        finishDate: new Date(activity.finishDate.setHours(15)),
+        checked: !!checked,
+        ignored: !!ignored,
+      }
     })
 
     const notFinishedActivities = activities.filter((activity) => {

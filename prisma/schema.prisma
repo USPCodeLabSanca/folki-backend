@@ -55,26 +55,27 @@ model subject_class {
 }
 
 model user {
-  id                  Int                   @id @default(autoincrement())
-  email               String                @unique
-  name                String
-  institute           institute?            @relation(fields: [instituteId], references: [id])
-  course              course?               @relation(fields: [courseId], references: [id])
-  courseId            Int?
-  instituteId         Int?
-  isAdmin             Boolean               @default(false)
-  isBlocked           Boolean               @default(false)
-  securePin           String?               @default("1234")
-  notificationId      String?
-  createdAt           DateTime              @default(now())
-  deletedAt           DateTime?
-  updatedAt           DateTime              @updatedAt
-  lastLogin           DateTime?
-  lastAccess          DateTime?
-  userVersion         String?
-  user_subject        user_subject[]
-  activity            activity[]
-  user_activity_check user_activity_check[]
+  id                   Int                    @id @default(autoincrement())
+  email                String                 @unique
+  name                 String
+  institute            institute?             @relation(fields: [instituteId], references: [id])
+  course               course?                @relation(fields: [courseId], references: [id])
+  courseId             Int?
+  instituteId          Int?
+  isAdmin              Boolean                @default(false)
+  isBlocked            Boolean                @default(false)
+  securePin            String?                @default("1234")
+  notificationId       String?
+  createdAt            DateTime               @default(now())
+  deletedAt            DateTime?
+  updatedAt            DateTime               @updatedAt
+  lastLogin            DateTime?
+  lastAccess           DateTime?
+  userVersion          String?
+  user_subject         user_subject[]
+  activity             activity[]
+  user_activity_check  user_activity_check[]
+  user_activity_ignore user_activity_ignore[]
 }
 
 model user_subject {
@@ -101,21 +102,22 @@ model user_absence {
 }
 
 model activity {
-  id                  Int                   @id @default(autoincrement())
-  name                String
-  description         String
-  value               Float?
-  userId              Int
-  subjectClassId      Int
-  subjectClass        subject_class         @relation(fields: [subjectClassId], references: [id])
-  user                user                  @relation(fields: [userId], references: [id])
-  type                ActivityType
-  finishDate          DateTime              @db.Date
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  isPrivate           Boolean               @default(false)
-  deletedAt           DateTime?
-  user_activity_check user_activity_check[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  description          String
+  value                Float?
+  userId               Int
+  subjectClassId       Int
+  subjectClass         subject_class          @relation(fields: [subjectClassId], references: [id])
+  user                 user                   @relation(fields: [userId], references: [id])
+  type                 ActivityType
+  finishDate           DateTime               @db.Date
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  isPrivate            Boolean                @default(false)
+  deletedAt            DateTime?
+  user_activity_check  user_activity_check[]
+  user_activity_ignore user_activity_ignore[]
 }
 
 model group {
@@ -170,6 +172,17 @@ model important_date {
 }
 
 model user_activity_check {
+  userId     Int
+  user       user     @relation(fields: [userId], references: [id])
+  activity   activity @relation(fields: [activityId], references: [id])
+  activityId Int
+  createdAt  DateTime @default(now())
+
+  @@id([userId, activityId])
+  @@index([userId, activityId])
+}
+
+model user_activity_ignore {
   userId     Int
   user       user     @relation(fields: [userId], references: [id])
   activity   activity @relation(fields: [activityId], references: [id])
