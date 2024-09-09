@@ -48,6 +48,13 @@ const getAllActivities = async (req: Request, res: Response) => {
       return !ignored
     })
 
+    // verify if user is using the new activities version
+    if (user?.userVersion !== '2.3.0') {
+      activities = activities.filter((activity) => {
+        return activity.deletedAt === null
+      })
+    }
+
     const notFinishedActivities = activities.filter((activity) => {
       const finishDate = new Date(activity.finishDate)
       const today = new Date()
