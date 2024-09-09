@@ -36,13 +36,16 @@ const getAllActivities = async (req: Request, res: Response) => {
 
     activities = activities.map((activity) => {
       const checked = activityChecks.find((check) => check.activityId === activity.id)
-      const ignored = activityIgnore.find((ignore) => ignore.activityId === activity.id)
       return {
         ...activity,
         finishDate: new Date(activity.finishDate.setHours(15)),
         checked: !!checked,
-        ignored: !!ignored,
       }
+    })
+
+    activities = activities.filter((activity) => {
+      const ignored = activityIgnore.find((ignore) => ignore.activityId === activity.id)
+      return !ignored
     })
 
     const notFinishedActivities = activities.filter((activity) => {
