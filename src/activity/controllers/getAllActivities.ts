@@ -14,6 +14,7 @@ const getAllActivities = async (req: Request, res: Response) => {
             isPrivate: false,
           },
           {
+            subjectClass: { user_subject: { some: { userId: user!.id } } },
             userId: user!.id,
           },
         ],
