@@ -4,6 +4,9 @@ start-docker:
 restart-docker:
 	@docker compose down; docker compose up --build -d
 
+run-migrations-docker:
+	@docker compose run backend npx prisma migrate dev
+
 run-migration-docker:
 	@docker compose run backend npx prisma migrate dev --name "${message}"
 
