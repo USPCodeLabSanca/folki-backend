@@ -32,7 +32,7 @@ const createActivity = async (req: Request, res: Response) => {
     }
 
     const alreadyCreatedActivity = await prisma.activity.findFirst({
-      where: { subjectClassId: body.subjectClassId, type: body.type, finishDate: body.finishDate },
+      where: { subjectClassId: body.subjectClassId, type: body.type, finishDate: body.finishDate, isPrivate: false },
     })
 
     if (alreadyCreatedActivity && !body.isPrivate) {
