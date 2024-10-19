@@ -6,6 +6,8 @@ const weekDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom']
 const loginJupiterLink = `https://uspdigital.usp.br/jupiterweb/webLogin.jsp`
 const userInfoJupiterLink = `https://uspdigital.usp.br/jupiterweb/uspDadosPessoaisMostrar?codmnu=4543`
 
+const USP_INSTITUTE_ID = 1
+
 // Yes, this code is totally a mess
 // Yes, I know SOLID
 const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0): Promise<user> => {
@@ -65,15 +67,17 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       }
     }
 
-    let institute = await prisma.institute.findFirst({ where: { name: jupiterWebInstitute } })
-    let course = await prisma.course.findFirst({ where: { name: jupiterWebCourse } })
+    let institute = await prisma.institute.findFirst({
+      where: { name: jupiterWebInstitute, universityId: USP_INSTITUTE_ID },
+    })
+    let course = await prisma.course.findFirst({ where: { name: jupiterWebCourse, universityId: USP_INSTITUTE_ID } })
 
     if (!course) {
-      course = await prisma.course.create({ data: { name: jupiterWebCourse } })
+      course = await prisma.course.create({ data: { name: jupiterWebCourse, universityId: USP_INSTITUTE_ID } })
     }
 
     if (!institute) {
-      institute = await prisma.institute.create({ data: { name: jupiterWebInstitute } })
+      institute = await prisma.institute.create({ data: { name: jupiterWebInstitute, universityId: USP_INSTITUTE_ID } })
     }
 
     const courseId = course!.id
@@ -150,6 +154,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         data: {
           code: newSubjectInfo.subjectCode,
           name: newSubjectInfo.subjectName,
+          universityId: USP_INSTITUTE_ID,
         },
       })
       subjectsAlreadyRegistered.push(newSubject)
@@ -184,6 +189,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           availableDays: subjectClass.availableDays,
           year: new Date().getFullYear(),
           semester: 1 + Math.floor(new Date().getMonth() / 6),
+          universityId: USP_INSTITUTE_ID,
         },
       })
 
@@ -245,6 +251,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           name,
           courseId,
           instituteId,
+          universityId: USP_INSTITUTE_ID,
         },
       })
     }
