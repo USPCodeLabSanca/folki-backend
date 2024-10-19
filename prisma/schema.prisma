@@ -14,24 +14,45 @@ datasource db {
 model campus {
   id             Int              @id @default(autoincrement())
   name           String           @unique
+  university     university?      @relation(fields: [universityId], references: [id])
+  universityId   Int?
   institutes     institute[]
   groups         group[]          @relation("group_campus")
   important_date important_date[]
 }
 
+model university {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  slug           String           @unique
+  logo           String
+  institute      institute[]
+  campus         campus[]
+  user           user[]
+  important_date important_date[]
+  course         course[]
+  subject        subject[]
+  subject_class  subject_class[]
+  group          group[]
+}
+
 model institute {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
-  isVisible Boolean @default(true)
-  campus    campus? @relation(fields: [campusId], references: [id])
-  campusId  Int?
-  user      user[]
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  isVisible    Boolean     @default(true)
+  campus       campus?     @relation(fields: [campusId], references: [id])
+  campusId     Int?
+  university   university? @relation(fields: [universityId], references: [id])
+  universityId Int?
+  user         user[]
 }
 
 model course {
-  id    Int    @id @default(autoincrement())
-  name  String
-  users user[]
+  id           Int         @id @default(autoincrement())
+  name         String
+  university   university? @relation(fields: [universityId], references: [id])
+  universityId Int?
+  users        user[]
 }
 
 model subject {
@@ -39,6 +60,8 @@ model subject {
   name             String
   code             String          @unique
   driveItemsNumber Int             @default(0)
+  university       university?     @relation(fields: [universityId], references: [id])
+  universityId     Int?
   subjectClass     subject_class[]
   driveItems       drive_item[]
 }
@@ -50,6 +73,8 @@ model subject_class {
   availableDays Json
   year          Int
   semester      Int
+  university    university?    @relation(fields: [universityId], references: [id])
+  universityId  Int?
   user_subject  user_subject[]
   activity      activity[]
 }
@@ -72,6 +97,8 @@ model user {
   lastLogin            DateTime?
   lastAccess           DateTime?
   userVersion          String?
+  university           university?            @relation(fields: [universityId], references: [id])
+  universityId         Int?
   user_subject         user_subject[]
   activity             activity[]
   user_activity_check  user_activity_check[]
@@ -132,6 +159,8 @@ model group {
   campuses         campus[]     @relation("group_campus")
   tags             tag[]        @relation("group_tag")
   links            group_link[]
+  university       university?  @relation(fields: [universityId], references: [id])
+  universityId     Int?
 }
 
 model group_link {
@@ -169,6 +198,8 @@ model important_date {
   shouldNotify Boolean        @default(false)
   campusId     Int?
   campus       campus?        @relation(fields: [campusId], references: [id])
+  universityId Int?
+  university   university?    @relation(fields: [universityId], references: [id])
 }
 
 model user_activity_check {
