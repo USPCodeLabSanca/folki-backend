@@ -11,7 +11,8 @@ const getImportantDates = async (req: Request, res: Response) => {
       orderBy: { date: 'asc' },
       where: {
         date: { gte: startOfYear },
-        AND: { OR: [{ campusId: null, universityId: user?.universityId }, { campusId: userInstitute?.campusId }] },
+        universityId: user?.universityId,
+        AND: { OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] },
       },
     })
 
