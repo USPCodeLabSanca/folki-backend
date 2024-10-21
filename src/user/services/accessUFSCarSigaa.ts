@@ -227,6 +227,7 @@ const accessUFSCarSigaa = async (sigaaCode: string, password: string) => {
       (userSubjectClassId) => !subjectClassesIds.includes(userSubjectClassId),
     )
 
+    /*
     if (userSubjectClassesToRemove.length) {
       await prisma.user_subject.updateMany({
         where: {
@@ -240,6 +241,7 @@ const accessUFSCarSigaa = async (sigaaCode: string, password: string) => {
         },
       })
     }
+    */
 
     for (const subjectClassId of subjectClassesIds) {
       const userSubject = await prisma.user_subject.findFirst({
