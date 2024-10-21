@@ -46,16 +46,26 @@ const generateSubjectData = (subject: ResponseUfscarSubject) => {
     subjectName: toTitleCase(subject.atividade),
     year: subject.ano,
     semester: subject.periodo,
-    time: subject.horarios.map((time) => {
-      // @ts-ignore
-      const day = weekDays[time.dia]
-      return {
-        day,
-        start: time.inicio.slice(0, 5),
-        end: time.fim.slice(0, 5),
-        classRoom: time.sala,
-      }
-    }),
+    time: subject.horarios
+      .map((time) => {
+        // @ts-ignore
+        const day = weekDays[time.dia]
+        return {
+          day,
+          start: time.inicio.slice(0, 5),
+          end: time.fim.slice(0, 5),
+          classRoom: time.sala,
+        }
+      })
+      .sort((a, b) => {
+        if (a.day < b.day) {
+          return -1
+        }
+        if (a.day > b.day) {
+          return 1
+        }
+        return 0
+      }),
   }
 }
 
