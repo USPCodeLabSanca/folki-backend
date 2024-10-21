@@ -37,6 +37,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         userVersion: true,
         isBlocked: true,
         university: true,
+        universityId: true,
       },
     })
 
