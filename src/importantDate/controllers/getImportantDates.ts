@@ -12,7 +12,7 @@ const getImportantDates = async (req: Request, res: Response) => {
       where: {
         date: { gte: startOfYear },
         universityId: user?.universityId,
-        AND: { OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] },
+        AND: [{ OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] }],
       },
     })
 
