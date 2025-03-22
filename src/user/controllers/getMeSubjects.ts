@@ -15,7 +15,7 @@ const getMeSubjects = async (req: Request, res: Response) => {
       select: { year: true, semester: true },
     });
 
-    if(latestClaSS) {
+    if(latestClass) {
       const userSubjects = await prisma.user_subject.findMany({
         where: {
           userId: user!.id,
