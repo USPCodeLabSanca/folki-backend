@@ -25,21 +25,27 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     )
     await page.goto(loginJupiterLink)
 
+    console.log('Test - N USP')
     await page.waitForSelector("input[name='codpes']")
     await page.focus('input[name="codpes"]')
     await page.keyboard.type(nUsp)
 
+    console.log('Test - Senha')
     await page.focus('input[name="senusu"]')
     await page.keyboard.type(password)
     await page.keyboard.press('Enter')
 
+
     await page.waitForSelector("a[href='gradeHoraria?codmnu=4759']", {
       timeout: 5000,
     })
+    console.log('Test - Grade Horária')
     await page.click("a[href='gradeHoraria?codmnu=4759']")
+    console.log('Test - Grade Horária - 2')
 
     await page.waitForSelector('select')
     await page.waitForSelector('option:nth-child(2)')
+    console.log('Test - Select')
 
     const options = await page.evaluate(() =>
       // @ts-ignore
@@ -49,9 +55,13 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     options.sort()
     await page.select(`select`, options[options.length - 1])
 
+    console.log('Test - Buscar')
+
     await page.click('#buscar')
 
     await page.waitForSelector("tr[id='1']")
+
+    console.log('Test - Curso')
 
     const courseElement = await page.$('#curso')
     const brokeCourseText = (await page.evaluate((el: any) => el?.textContent, courseElement))?.split(' - ')
