@@ -41,11 +41,11 @@ const authFromJupiter = async (req: Request, res: Response) => {
           'Esse é um erro de comunicação com o sistema da universidade! Entre em comunicação com yfaria@usp.br para reportar o erro.',
       })
 
-    if (error.message.includes('JSON Parse error'))
+    if (error.message.includes('Navigation timeout of 30000 ms exceeded'))
       return res.status(400).send({
         title: 'Ei, tente novamente mais tarde!',
         message:
-          'Esse é um erro de comunicação com o sistema da universidade! O JupiterWeb pode estar offline.',
+          'Esse é um erro de comunicação com o sistema da universidade! O JupiterWeb pode estar offline. Tente novamente mais tarde.',
       })
     
     console.error(`[ERROR] [Auth] Unexpected User Get: ${error.message}`)
