@@ -40,6 +40,8 @@ const authFromJupiter = async (req: Request, res: Response) => {
         message:
           'Esse é um erro de comunicação com o sistema da universidade! Entre em comunicação com yfaria@usp.br para reportar o erro.',
       })
+    
+    console.log(error.message, error.message.includes('Navigation timeout')) 
 
     if (error.message.includes('Navigation timeout'))
       return res.status(400).send({
