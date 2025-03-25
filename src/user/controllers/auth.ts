@@ -41,7 +41,7 @@ const authFromJupiter = async (req: Request, res: Response) => {
           'Esse é um erro de comunicação com o sistema da universidade! Entre em comunicação com yfaria@usp.br para reportar o erro.',
       })
 
-    if (error.message.includes('Navigation timeout of 30000 ms exceeded'))
+    if (error.message.includes('Navigation timeout'))
       return res.status(400).send({
         title: 'Ei, tente novamente mais tarde!',
         message:
