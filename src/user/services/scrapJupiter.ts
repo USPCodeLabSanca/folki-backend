@@ -24,7 +24,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
     )
     console.log('Test - Go to login page')
-    await page.goto(loginJupiterLink)
+    await page.goto(loginJupiterLink, { timeout: 15000 })
 
     console.log('Test - N USP')
     await page.waitForSelector("input[name='codpes']")
