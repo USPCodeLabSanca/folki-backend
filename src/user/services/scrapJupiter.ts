@@ -23,6 +23,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
     )
+    console.log('Test - Go to login page')
     await page.goto(loginJupiterLink)
 
     console.log('Test - N USP')
@@ -287,6 +288,8 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     return user
   } catch (error: any) {
     if (browser) await browser.close()
+
+    console.error(error?.message)
 
     if (error.message.includes('Failed to launch the browser process!')) {
       console.log('[ERROR] Error Scraping Jupiter: Memory Error - Retry ')
