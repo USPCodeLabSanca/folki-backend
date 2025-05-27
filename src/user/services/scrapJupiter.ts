@@ -253,6 +253,17 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           },
         })
       }
+
+      if (name != user.name) {
+        await prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            name: name
+          },
+        })
+      }
     }
 
     if (!user) {
