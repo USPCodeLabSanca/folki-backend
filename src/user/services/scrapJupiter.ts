@@ -320,6 +320,8 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         },
       })
 
+      console.log('Test - User Subject', userSubject)
+
       if (!userSubject) {
         await prisma.user_subject.create({
           data: {
