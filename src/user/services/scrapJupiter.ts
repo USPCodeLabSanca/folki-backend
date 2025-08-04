@@ -175,6 +175,8 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       (subjectCode) => !subjectsAlreadyRegistered.find((subject) => subject.code === subjectCode),
     )
 
+    console.log('Test - Not registered subjects', notRegisteredSubjectCodes)
+
     for (let subjectCode of notRegisteredSubjectCodes) {
       page.$eval(`span[class="${subjectCode}"]`, (element: any) => element.click())
       //await page.waitForSelector(".conteudo[style='display: block;']")
@@ -210,6 +212,8 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
     })
 
     const subjectClassesIds: number[] = []
+
+    console.log('Test - Subject Classes', subjectClasses)
 
     for (const subjectClass of subjectClasses) {
       const dbSubjectClass = await prisma.subject_class.findFirst({
