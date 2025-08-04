@@ -114,7 +114,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           subject = subject.split('-')[0]
 
           // click on the subject
-          element = await page.$(`span.${subject}`)
+          element = await page.$(`span[class="${subject}"]`)
           await element?.click();
 
           // wait for the overlay to disappear
@@ -208,6 +208,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       return {
         subjectId: subject!.id,
         availableDays: hash[subjectCode],
+        description: newSubjectsInfo.find((info: { subjectCode: string }) => info.subjectCode === subjectCode)?.description || '',
       }
     })
 
@@ -228,6 +229,14 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
       if (dbSubjectClass) {
         subjectClassesIds.push(dbSubjectClass.id)
+
+        if (dbSubjectClass.observations !== subjectClass.description) {
+          await prisma.subject_class.update({
+            where: { id: dbSubjectClass.id },
+            data: { observations: subjectClass.description },
+          })
+        }
+
         continue
       }
 
@@ -238,6 +247,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           year: new Date().getFullYear(),
           semester: 1 + Math.floor(new Date().getMonth() / 6),
           universityId: USP_INSTITUTE_ID,
+          observations: subjectClass.description,
         },
       })
 

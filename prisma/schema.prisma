@@ -73,6 +73,7 @@ model subject_class {
   availableDays Json
   year          Int
   semester      Int
+  observations  String?
   university    university?    @relation(fields: [universityId], references: [id])
   universityId  Int?
   user_subject  user_subject[]
