@@ -141,15 +141,15 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
           // store data
           if (!hash[subject]) {
-            hash[subject] = [
+            hash[subject] = { days: [
               {
                 day: weekDays[tdIndex - 3],
                 start: startHour,
                 end: lastHour,
               },
-            ]
+            ], observations: observationsText || '' }
           } else {
-            hash[subject].push({
+            hash[subject].days.push({
               day: weekDays[tdIndex - 3],
               start: startHour,
               end: lastHour,
@@ -175,8 +175,6 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       (subjectCode) => !subjectsAlreadyRegistered.find((subject) => subject.code === subjectCode),
     )
 
-    console.log('Test - Not registered subjects', notRegisteredSubjectCodes)
-
     for (let subjectCode of notRegisteredSubjectCodes) {
       page.$eval(`span[class="${subjectCode}"]`, (element: any) => element.click())
       //await page.waitForSelector(".conteudo[style='display: block;']")
@@ -185,11 +183,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         // @ts-ignore
         () => document.querySelector('.nomdis')?.textContent,
       )
-      const description = await page.evaluate(
-        // @ts-ignore
-        () => document.querySelector('#div_disciplina')?.innerHTML,
-      )
-      newSubjectsInfo.push({ subjectCode, subjectName, description })
+      newSubjectsInfo.push({ subjectCode, subjectName })
     }
 
     for (const newSubjectInfo of newSubjectsInfo) {
@@ -207,14 +201,12 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       const subject = subjectsAlreadyRegistered.find((subject) => subject.code === subjectCode)
       return {
         subjectId: subject!.id,
-        availableDays: hash[subjectCode],
-        description: newSubjectsInfo.find((info: { subjectCode: string }) => info.subjectCode === subjectCode)?.description || '',
+        availableDays: hash[subjectCode].days,
+        observations: hash[subjectCode].observations,
       }
     })
 
     const subjectClassesIds: number[] = []
-
-    console.log('Test - Subject Classes', subjectClasses)
 
     for (const subjectClass of subjectClasses) {
       const dbSubjectClass = await prisma.subject_class.findFirst({
@@ -230,10 +222,10 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       if (dbSubjectClass) {
         subjectClassesIds.push(dbSubjectClass.id)
 
-        if (dbSubjectClass.observations !== subjectClass.description) {
+        if (dbSubjectClass.observations !== subjectClass.observations) {
           await prisma.subject_class.update({
             where: { id: dbSubjectClass.id },
-            data: { observations: subjectClass.description },
+            data: { observations: subjectClass.observations },
           })
         }
 
@@ -247,7 +239,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           year: new Date().getFullYear(),
           semester: 1 + Math.floor(new Date().getMonth() / 6),
           universityId: USP_INSTITUTE_ID,
-          observations: subjectClass.description,
+          observations: subjectClass.observations || '',
         },
       })
 
@@ -332,8 +324,6 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
           subjectClassId,
         },
       })
-
-      console.log('Test - User Subject', subjectClassId, userSubject)
 
       if (!userSubject) {
         await prisma.user_subject.create({
