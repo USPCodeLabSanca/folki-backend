@@ -8,6 +8,8 @@ router.route('/').all(auth).get(controller.getAllActivities)
 router.route('/').all(auth).post(controller.createActivity)
 router.route('/:id/check').all(auth).post(controller.checkActivity)
 router.route('/:id/check').all(auth).delete(controller.uncheckActivity)
+router.route('/:id/ignore').all(auth).post(controller.ignoreActivity)
+router.route('/:id/ignore').all(auth).delete(controller.unignoreActivity)
 router.route('/:id').all(auth).patch(controller.updateActivity)
 router.route('/:id').all(auth).delete(controller.deleteActivity)
 

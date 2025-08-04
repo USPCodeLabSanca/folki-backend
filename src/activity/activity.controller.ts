@@ -5,6 +5,8 @@ import { updateActivity } from './controllers/updateActivity'
 import { deleteActivity } from './controllers/deleteActivity'
 import { checkActivity } from './controllers/checkActivity'
 import { uncheckActivity } from './controllers/uncheckActivity'
+import { ignoreActivity } from './controllers/ignoreActivity'
+import { unignoreActivity } from './controllers/unignoreActivity'
 
 interface Controller {
   getAllActivities: (req: Request, res: Response) => void
@@ -13,6 +15,8 @@ interface Controller {
   deleteActivity: (req: Request, res: Response) => void
   checkActivity: (req: Request, res: Response) => void
   uncheckActivity: (req: Request, res: Response) => void
+  ignoreActivity: (req: Request, res: Response) => void
+  unignoreActivity: (req: Request, res: Response) => void
 }
 
 const controller: Controller = {
@@ -22,6 +26,8 @@ const controller: Controller = {
   deleteActivity,
   checkActivity,
   uncheckActivity,
+  ignoreActivity,
+  unignoreActivity,
 }
 
 export default controller

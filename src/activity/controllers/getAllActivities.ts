@@ -7,7 +7,18 @@ const getAllActivities = async (req: Request, res: Response) => {
 
   try {
     let activities = await prisma.activity.findMany({
-      where: { subjectClass: { user_subject: { some: { userId: user!.id } } } },
+      where: {
+        OR: [
+          {
+            subjectClass: { user_subject: { some: { userId: user!.id } } },
+            isPrivate: false,
+          },
+          {
+            subjectClass: { user_subject: { some: { userId: user!.id } } },
+            userId: user!.id,
+          },
+        ],
+      },
       orderBy: { finishDate: 'asc' },
       include: {
         subjectClass: { include: { subject: { select: { id: true, name: true } } } },
@@ -19,10 +30,30 @@ const getAllActivities = async (req: Request, res: Response) => {
       where: { userId: user!.id },
     })
 
+    const activityIgnore = await prisma.user_activity_ignore.findMany({
+      where: { userId: user!.id },
+    })
+
     activities = activities.map((activity) => {
       const checked = activityChecks.find((check) => check.activityId === activity.id)
-      return { ...activity, finishDate: new Date(activity.finishDate.setHours(15)), checked: !!checked }
+      return {
+        ...activity,
+        finishDate: new Date(activity.finishDate.setHours(15)),
+        checked: !!checked,
+      }
     })
+
+    activities = activities.filter((activity) => {
+      const ignored = activityIgnore.find((ignore) => ignore.activityId === activity.id)
+      return !ignored
+    })
+
+    // verify if user is using the new activities version
+    if (user?.userVersion !== '2.3.0') {
+      activities = activities.filter((activity) => {
+        return activity.deletedAt === null
+      })
+    }
 
     const notFinishedActivities = activities.filter((activity) => {
       const finishDate = new Date(activity.finishDate)

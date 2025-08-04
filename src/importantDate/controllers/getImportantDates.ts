@@ -9,7 +9,11 @@ const getImportantDates = async (req: Request, res: Response) => {
     const userInstitute = await prisma.institute.findUnique({ where: { id: user!.instituteId! } })
     const importantDates = await prisma.important_date.findMany({
       orderBy: { date: 'asc' },
-      where: { date: { gte: startOfYear }, AND: { OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] } },
+      where: {
+        date: { gte: startOfYear },
+        universityId: user?.universityId,
+        AND: [{ OR: [{ campusId: null }, { campusId: userInstitute?.campusId }] }],
+      },
     })
 
     return res.send({ importantDates })
