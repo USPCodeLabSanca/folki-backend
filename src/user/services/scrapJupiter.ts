@@ -220,6 +220,9 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         where: {
           subjectId: subjectClass.subjectId,
           availableDays: { equals: subjectClass.availableDays },
+          year: new Date().getFullYear(),
+          semester: 1 + Math.floor(new Date().getMonth() / 6),
+          universityId: USP_INSTITUTE_ID,
         },
       })
 
@@ -320,7 +323,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         },
       })
 
-      console.log('Test - User Subject', userSubject)
+      console.log('Test - User Subject', subjectClassId, userSubject)
 
       if (!userSubject) {
         await prisma.user_subject.create({
