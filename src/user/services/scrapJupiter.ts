@@ -59,7 +59,7 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
 
     console.log('Test - Buscar')
 
-    await page.click('#buscar')
+    await page.click('input[type="button"][value="Buscar"]')
 
     await page.waitForSelector("tr[id='1']")
 
@@ -111,30 +111,30 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
         let subject = await page.evaluate((el: any) => el?.textContent, element)
 
         if (subject) {
-          subject = subject.split('-')[0];
+          subject = subject.split('-')[0]
 
           // click on the subject
-          element = await page.$(`span.${subject}`);
+          element = await page.$(`span.${subject}`)
           await element?.click();
 
           // wait for the overlay to disappear
-          await page.waitForSelector('.blockOverlay', { hidden: true });
+          await page.waitForSelector('.blockOverlay', { hidden: true })
 
           // treating some bug that makes the first click not work
           if (firstTime) {
             await element?.click();
-            await page.waitForSelector('.blockOverlay', { hidden: true });
-            firstTime = false;
+            await page.waitForSelector('.blockOverlay', { hidden: true })
+            firstTime = false
           }
 
           // click on the "oferecimento" tab
           await page.click('a[href="#div_oferecimento"]');
-          await page.waitForSelector('.blockOverlay', { hidden: true });
+          await page.waitForSelector('.blockOverlay', { hidden: true })
 
           // get the observations and print them
           // we could use this to get any detail we want about the subject
-          let observationsElement = await page.$('div[class="adicionado"] > table > tbody > tr > td[class="obstur"]');
-          let observationsText = await page.evaluate((el: any) => el?.textContent, observationsElement);
+          let observationsElement = await page.$('div[class="adicionado"] > table > tbody > tr > td[class="obstur"]')
+          let observationsText = await page.evaluate((el: any) => el?.textContent?.replace(/\n/g, ' '), observationsElement);
           if (observationsText) {
             console.log(subject, '- observações:', observationsText);
           }
