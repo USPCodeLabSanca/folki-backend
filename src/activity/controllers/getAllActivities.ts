@@ -4,17 +4,18 @@ import prisma from '../../db'
 const getAllActivities = async (req: Request, res: Response) => {
   // @ts-ignore
   const { user } = req
+  const currentYear = new Date().getFullYear()
 
   try {
     let activities = await prisma.activity.findMany({
       where: {
         OR: [
           {
-            subjectClass: { user_subject: { some: { userId: user!.id } } },
+            subjectClass: { user_subject: { some: { userId: user!.id } }, year: currentYear },
             isPrivate: false,
           },
           {
-            subjectClass: { user_subject: { some: { userId: user!.id } } },
+            subjectClass: { user_subject: { some: { userId: user!.id } }, year: currentYear },
             userId: user!.id,
           },
         ],
