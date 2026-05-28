@@ -1,12 +1,59 @@
 import puppeteer from 'puppeteer-extra'
 import prisma from '../../db'
 import { user } from '@prisma/client'
+import fs from 'fs'
 
 const weekDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom']
 const loginJupiterLink = `https://uspdigital.usp.br/jupiterweb/webLogin.jsp`
 const userInfoJupiterLink = `https://uspdigital.usp.br/jupiterweb/uspDadosPessoaisMostrar?codmnu=4543`
 
 const USP_INSTITUTE_ID = 1
+
+const resolveChromeExecutablePath = (): string | undefined => {
+  const envCandidates = [
+    process.env.PUPPETEER_EXECUTABLE_PATH,
+    process.env.GOOGLE_CHROME_BIN,
+    process.env.CHROME_BIN,
+    process.env.CHROME_PATH,
+  ].filter(Boolean) as string[]
+
+  for (const candidate of envCandidates) {
+    if (fs.existsSync(candidate)) return candidate
+  }
+
+  if (process.platform === 'darwin') {
+    const macCandidates = [
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    ]
+
+    return macCandidates.find((p) => fs.existsSync(p))
+  }
+
+  if (process.platform === 'linux') {
+    const linuxCandidates = [
+      // Common Heroku apt-buildpack paths
+      '/app/.apt/opt/google/chrome/chrome',
+      '/app/.apt/usr/bin/google-chrome',
+      // Common Debian/Ubuntu paths
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/google-chrome',
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser',
+    ]
+
+    return linuxCandidates.find((p) => fs.existsSync(p))
+  }
+
+  return undefined
+}
+
+const dropInvalidPuppeteerExecutablePathEnv = () => {
+  const configured = process.env.PUPPETEER_EXECUTABLE_PATH
+  if (configured && !fs.existsSync(configured)) {
+    delete process.env.PUPPETEER_EXECUTABLE_PATH
+  }
+}
 
 // Yes, this code is totally a mess
 // Yes, I know SOLID
@@ -18,7 +65,13 @@ const getScrapJupiter = async (nUsp: string, password: string, retry: number = 0
       throw new Error('Max retries reached')
     }
 
-    browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true })
+    dropInvalidPuppeteerExecutablePathEnv()
+    const executablePath = resolveChromeExecutablePath()
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox'],
+      headless: true,
+      ...(executablePath ? { executablePath } : {}),
+    })
     const page = await browser.newPage()
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
